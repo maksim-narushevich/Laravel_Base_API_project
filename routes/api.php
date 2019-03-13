@@ -16,7 +16,13 @@ use Illuminate\Http\Request;
 Route::prefix('v1')->group(function(){
     Route::post('login', 'Api\AuthController@login');
     Route::post('register', 'Api\AuthController@register');
+
     Route::group(['middleware' => 'auth:api'], function(){
         Route::get('getUser', 'Api\AuthController@getUser');
+    });
+
+    Route::apiResource('/products',"Api\ProductController");
+    Route::group(['prefix'=>'products'],function (){
+        Route::apiResource('{product}/reviews',"Api\ReviewController");
     });
 });
