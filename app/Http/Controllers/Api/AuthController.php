@@ -8,15 +8,39 @@ use Validator;
 
 
 /**
- * @SWG\Info(
+ * @OA\Info(
  *      version="1.0.0",
- *      title="My API",
+ *      title="L5 OpenApi",
  *      description="L5 Swagger OpenApi description",
- *      @SWG\Contact(
+ *      @OA\Contact(
  *          email="darius@matulionis.lt"
- *      )
+ *      ),
+ *     @OA\License(
+ *         name="Apache 2.0",
+ *         url="http://www.apache.org/licenses/LICENSE-2.0.html"
+ *     )
+ * )
+
+ *  @OA\Server(
+ *      url="http://laramyapi.test/api/v1",
+ *      description="L5 Swagger OpenApi Server"
+ * )
+ * @OA\SecurityScheme(
+ *     @OA\Flow(
+ *         flow="clientCredentials",
+ *         tokenUrl="oauth/token",
+ *         scopes={}
+ *     ),
+ *     securityScheme="bearerAuth",
+ *     in="header",
+ *     type="http",
+ *     description="Oauth2 security",
+ *     name="oauth2",
+ *     scheme="bearer",
+ *     bearerFormat="JWT",
  * )
  */
+
 class AuthController extends Controller
 {
     public $successStatus = 200;
@@ -48,6 +72,24 @@ class AuthController extends Controller
         }
     }
 
+    /**
+     * @OA\Get(
+     *      path="/getUser",
+     *      operationId="getProjectById",
+     *      tags={"User"},
+     *      summary="Get authorized user details",
+     *      description="Returns project data",
+     *      @OA\Response(
+     *          response=200,
+     *          description="successful operation"
+     *       ),
+     *      @OA\Response(response=400, description="Bad request"),
+     *      @OA\Response(response=404, description="Resource Not Found"),
+     *     security={
+     *         {"bearerAuth": {}}
+     *     }
+     * )
+     */
     public function getUser() {
         $user = Auth::user();
         return response()->json(['success' => $user], $this->successStatus);
