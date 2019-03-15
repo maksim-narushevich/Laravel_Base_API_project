@@ -6,6 +6,17 @@ use App\User;
 use Illuminate\Support\Facades\Auth;
 use Validator;
 
+
+/**
+ * @SWG\Info(
+ *      version="1.0.0",
+ *      title="My API",
+ *      description="L5 Swagger OpenApi description",
+ *      @SWG\Contact(
+ *          email="darius@matulionis.lt"
+ *      )
+ * )
+ */
 class AuthController extends Controller
 {
     public $successStatus = 200;
