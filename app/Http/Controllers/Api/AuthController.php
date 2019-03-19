@@ -10,10 +10,10 @@ use Validator;
 /**
  * @OA\Info(
  *      version="1.0.0",
- *      title="L5 OpenApi",
- *      description="L5 Swagger OpenApi description",
+ *      title="API DOCS",
+ *      description="Advanced API documentation",
  *      @OA\Contact(
- *          email="darius@matulionis.lt"
+ *          email="narushevich.maksim@gmail.com"
  *      ),
  *     @OA\License(
  *         name="Apache 2.0",
@@ -23,7 +23,7 @@ use Validator;
 
  *  @OA\Server(
  *      url="http://laramyapi.test/api/v1",
- *      description="L5 Swagger OpenApi Server"
+ *      description="API documentation"
  * )
  * @OA\SecurityScheme(
  *     @OA\Flow(
@@ -45,6 +45,25 @@ class AuthController extends Controller
 {
     public $successStatus = 200;
 
+    /**
+     * @OA\Post(
+     *      path="/register",
+     *      tags={"User"},
+     *     operationId="addUser",
+     *     description="Create a new user.",
+     *     @OA\RequestBody(
+     *         description="Create user",
+     *          required=true,
+     *         @OA\JsonContent(ref="#/components/schemas/NewUser")
+     *     ),
+     *    @OA\Response(response=201, description="Null response"),
+     *    @OA\Response(
+     *        response="default",
+     *        description="unexpected error",
+     *        @OA\Schema(ref="#/components/schemas/Error")
+     *    )
+     * )
+     */
     public function register(Request $request) {
         $validator = Validator::make($request->all(), [
             'name' => 'required',
@@ -62,6 +81,25 @@ class AuthController extends Controller
     }
 
 
+    /**
+     * @OA\Post(
+     *      path="/login",
+     *      tags={"User"},
+     *     operationId="loginUser",
+     *     description="Login user.",
+     *     @OA\RequestBody(
+     *         description="Authorize user and get token",
+     *          required=true,
+     *         @OA\JsonContent(ref="#/components/schemas/User")
+     *     ),
+     *    @OA\Response(response=201, description="Null response"),
+     *    @OA\Response(
+     *        response="default",
+     *        description="unexpected error",
+     *        @OA\Schema(ref="#/components/schemas/Error")
+     *    )
+     * )
+     */
     public function login(){
         if(Auth::attempt(['email' => request('email'), 'password' => request('password')])){
             $user = Auth::user();
@@ -75,10 +113,9 @@ class AuthController extends Controller
     /**
      * @OA\Get(
      *      path="/getUser",
-     *      operationId="getProjectById",
      *      tags={"User"},
      *      summary="Get authorized user details",
-     *      description="Returns project data",
+     *      description="Returns logged user data",
      *      @OA\Response(
      *          response=200,
      *          description="successful operation"

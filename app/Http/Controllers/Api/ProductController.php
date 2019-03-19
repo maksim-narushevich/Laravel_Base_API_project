@@ -25,6 +25,23 @@ class ProductController extends Controller
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Resources\Json\AnonymousResourceCollection
+     *
+     * @OA\Get(
+     *      path="/products",
+     *      operationId="getProducts",
+     *      tags={"Product"},
+     *      summary="Get all products",
+     *      description="Returns all product details",
+     *      @OA\Response(
+     *          response=200,
+     *          description="successful operation"
+     *       ),
+     *      @OA\Response(response=400, description="Bad request"),
+     *      @OA\Response(response=404, description="Resource Not Found"),
+     *     security={
+     *         {"bearerAuth": {}}
+     *     }
+     * )
      */
     public function index()
     {
@@ -47,6 +64,27 @@ class ProductController extends Controller
      * @param \App\Http\Requests\ProductRequest $request
      *
      * @return \Illuminate\Http\Response
+     *
+     * @OA\Post(
+     *      path="/products",
+     *      tags={"Product"},
+     *     operationId="addProduct",
+     *     description="Create a new product.",
+     *     @OA\RequestBody(
+     *         description="Create product",
+     *          required=true,
+     *          @OA\JsonContent(ref="#/components/schemas/NewProduct")
+     *     ),
+     *    @OA\Response(response=201, description="Null response"),
+     *    @OA\Response(
+     *        response="default",
+     *        description="unexpected error",
+     *        @OA\Schema(ref="#/components/schemas/Error")
+     *    ),
+     *     security={
+     *         {"bearerAuth": {}}
+     *     }
+     * )
      */
     public function store(ProductRequest $request)
     {
@@ -69,6 +107,32 @@ class ProductController extends Controller
      * @param \App\Models\Product $product
      *
      * @return \App\Http\Resources\Product\ProductResource
+     *
+     * @OA\Get(
+     *      path="/products/{id}",
+     *      operationId="getProductById",
+     *      tags={"Product"},
+     *      summary="Get product details",
+     *      description="Returns product details",
+     *      @OA\Parameter(
+     *          name="id",
+     *          description="Product id",
+     *          required=true,
+     *          in="path",
+     *          @OA\Schema(
+     *              type="integer"
+     *          )
+     *      ),
+     *      @OA\Response(
+     *          response=200,
+     *          description="successful operation"
+     *       ),
+     *      @OA\Response(response=400, description="Bad request"),
+     *      @OA\Response(response=404, description="Resource Not Found"),
+     *     security={
+     *         {"bearerAuth": {}}
+     *     }
+     * )
      */
     public function show(Product $product)
     {
@@ -95,11 +159,44 @@ class ProductController extends Controller
      *
      * @return \Illuminate\Http\Response
      * @throws \App\Exceptions\ProductNotBelongsToUser
+     *
+     * @OA\Put(
+     *      path="/products/{id}",
+     *      tags={"Product"},
+     *     operationId="updateProduct",
+     *     description="Update product.",
+     *      @OA\Parameter(
+     *          name="id",
+     *          description="Product id",
+     *          required=true,
+     *          in="path",
+     *          @OA\Schema(
+     *              type="integer"
+     *          )
+     *      ),
+     *     @OA\RequestBody(
+     *         description="Update product",
+     *          required=true,
+     *          @OA\JsonContent(ref="#/components/schemas/Product")
+     *     ),
+     *    @OA\Response(response=201, description="Null response"),
+     *    @OA\Response(
+     *        response="default",
+     *        description="unexpected error",
+     *        @OA\Schema(ref="#/components/schemas/Error")
+     *    ),
+     *     security={
+     *         {"bearerAuth": {}}
+     *     }
+     * )
      */
     public function update(Request $request, Product $product)
     {
         $this->ProductUserCheck($product);
-        $request['detail'] = $request->description;
+        if( $request->description){
+            $request['detail'] = $request->description;
+        }
+
         unset($request['description']);
         $product->update($request->all());
         return response([
@@ -110,16 +207,42 @@ class ProductController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param \App\Models\Product $product
-     *
+     * @param $id
      * @return \Illuminate\Http\Response
-     * @throws \App\Exceptions\ProductNotBelongsToUser
+     * @throws ProductNotBelongsToUser
+     * @OA\Delete(path="/products/{product}",
+     *   tags={"Product"},
+     *   summary="Delete product",
+     *   description="This can only be done by the logged in user.",
+     *   operationId="deleteProduct",
+     *   @OA\Parameter(
+     *     name="product",
+     *     in="path",
+     *     description="ID of product to be deleted",
+     *     required=true,
+     *     @OA\Schema(
+     *         type="integer"
+     *     )
+     *   ),
+     *   @OA\Response(response=400, description="Invalid ID supplied"),
+     *   @OA\Response(response=404, description="Product not found"),
+     *     security={
+     *         {"bearerAuth": {}}
+     *     }
+     * )
      */
-    public function destroy(Product $product)
+    public function destroy($id)
     {
-        $this->ProductUserCheck($product);
-        $product->delete();
-        return response(['data'=>"Product with id ".$product->id." was successfully deleted"],Response::HTTP_OK);
+        $product=Product::find($id);
+        if($product!=null){
+            $this->ProductUserCheck($product);
+            $product->delete();
+            return response(['data'=>"Product with id ".$id." was successfully deleted"],Response::HTTP_OK);
+        }else{
+            return response()
+                ->json(['error' => 'Product with ID '.$id." was not found"]);
+        }
+
     }
     public function ProductUserCheck($product)
     {

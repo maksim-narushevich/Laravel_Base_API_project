@@ -1,10 +1,10 @@
 {
     "openapi": "3.0.0",
     "info": {
-        "title": "L5 OpenApi",
-        "description": "L5 Swagger OpenApi description",
+        "title": "API DOCS",
+        "description": "Advanced API documentation",
         "contact": {
-            "email": "darius@matulionis.lt"
+            "email": "narushevich.maksim@gmail.com"
         },
         "license": {
             "name": "Apache 2.0",
@@ -15,18 +15,74 @@
     "servers": [
         {
             "url": "http://laramyapi.test/api/v1",
-            "description": "L5 Swagger OpenApi Server"
+            "description": "API documentation"
         }
     ],
     "paths": {
+        "/register": {
+            "post": {
+                "tags": [
+                    "User"
+                ],
+                "description": "Create a new user.",
+                "operationId": "addUser",
+                "requestBody": {
+                    "description": "Create user",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/NewUser"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Null response"
+                    },
+                    "default": {
+                        "description": "unexpected error"
+                    }
+                }
+            }
+        },
+        "/login": {
+            "post": {
+                "tags": [
+                    "User"
+                ],
+                "description": "Login user.",
+                "operationId": "loginUser",
+                "requestBody": {
+                    "description": "Authorize user and get token",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/User"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Null response"
+                    },
+                    "default": {
+                        "description": "unexpected error"
+                    }
+                }
+            }
+        },
         "/getUser": {
             "get": {
                 "tags": [
                     "User"
                 ],
                 "summary": "Get authorized user details",
-                "description": "Returns project data",
-                "operationId": "getProjectById",
+                "description": "Returns logged user data",
+                "operationId": "App\\Http\\Controllers\\Api\\AuthController::getUser",
                 "responses": {
                     "200": {
                         "description": "successful operation"
@@ -44,9 +100,258 @@
                     }
                 ]
             }
+        },
+        "/products": {
+            "get": {
+                "tags": [
+                    "Product"
+                ],
+                "summary": "Get all products",
+                "description": "Returns all product details",
+                "operationId": "getProducts",
+                "responses": {
+                    "200": {
+                        "description": "successful operation"
+                    },
+                    "400": {
+                        "description": "Bad request"
+                    },
+                    "404": {
+                        "description": "Resource Not Found"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Product"
+                ],
+                "summary": "Store a newly created resource in storage.",
+                "description": "Create a new product.",
+                "operationId": "addProduct",
+                "requestBody": {
+                    "description": "Create product",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/NewProduct"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Null response"
+                    },
+                    "default": {
+                        "description": "unexpected error"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/products/{id}": {
+            "get": {
+                "tags": [
+                    "Product"
+                ],
+                "summary": "Get product details",
+                "description": "Returns product details",
+                "operationId": "getProductById",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Product id",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation"
+                    },
+                    "400": {
+                        "description": "Bad request"
+                    },
+                    "404": {
+                        "description": "Resource Not Found"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "put": {
+                "tags": [
+                    "Product"
+                ],
+                "summary": "Update the specified resource in storage.",
+                "description": "Update product.",
+                "operationId": "updateProduct",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Product id",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "description": "Update product",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Product"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Null response"
+                    },
+                    "default": {
+                        "description": "unexpected error"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/products/{product}": {
+            "delete": {
+                "tags": [
+                    "Product"
+                ],
+                "summary": "Delete product",
+                "description": "This can only be done by the logged in user.",
+                "operationId": "deleteProduct",
+                "parameters": [
+                    {
+                        "name": "product",
+                        "in": "path",
+                        "description": "ID of product to be deleted",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "400": {
+                        "description": "Invalid ID supplied"
+                    },
+                    "404": {
+                        "description": "Product not found"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
         }
     },
     "components": {
+        "schemas": {
+            "Product": {
+                "properties": {
+                    "name": {
+                        "type": "string"
+                    },
+                    "description": {
+                        "type": "string"
+                    },
+                    "stock": {
+                        "type": "integer"
+                    },
+                    "price": {
+                        "type": "integer"
+                    },
+                    "discount": {
+                        "type": "integer"
+                    }
+                },
+                "type": "object"
+            },
+            "NewProduct": {
+                "type": "object",
+                "allOf": [
+                    {
+                        "$ref": "#/components/schemas/Product"
+                    },
+                    {
+                        "required": [
+                            "name",
+                            "description",
+                            "stock",
+                            "price",
+                            "discount"
+                        ]
+                    }
+                ]
+            },
+            "User": {
+                "required": [
+                    "email",
+                    "password"
+                ],
+                "properties": {
+                    "email": {
+                        "type": "string"
+                    },
+                    "password": {
+                        "type": "string"
+                    }
+                },
+                "type": "object"
+            },
+            "NewUser": {
+                "type": "object",
+                "allOf": [
+                    {
+                        "$ref": "#/components/schemas/User"
+                    },
+                    {
+                        "required": [
+                            "name",
+                            "c_password"
+                        ],
+                        "properties": {
+                            "name": {
+                                "type": "string"
+                            },
+                            "c_password": {
+                                "type": "string"
+                            }
+                        },
+                        "type": "object"
+                    }
+                ]
+            }
+        },
         "securitySchemes": {
             "bearerAuth": {
                 "type": "http",
