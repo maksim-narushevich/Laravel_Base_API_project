@@ -18,7 +18,7 @@ Route::prefix('v1')->group(function(){
     Route::post('register', 'Api\AuthController@register');
 
     Route::group(['middleware' => 'auth:api'], function(){
-        Route::get('getUser', 'Api\AuthController@getUser');
+        Route::get('auth-user', 'Api\AuthController@getUser');
     });
 
     Route::apiResource('/products',"Api\ProductController");

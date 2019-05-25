@@ -75,7 +75,7 @@
                 }
             }
         },
-        "/getUser": {
+        "/auth-user": {
             "get": {
                 "tags": [
                     "User"

@@ -112,7 +112,7 @@ class AuthController extends Controller
 
     /**
      * @OA\Get(
-     *      path="/getUser",
+     *      path="/auth-user",
      *      tags={"User"},
      *      summary="Get authorized user details",
      *      description="Returns logged user data",
