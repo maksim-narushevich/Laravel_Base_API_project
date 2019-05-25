@@ -131,4 +131,51 @@ class AuthController extends Controller
         $user = Auth::user();
         return response()->json(['success' => $user], $this->successStatus);
     }
+
+
+    /**
+     * @OA\Delete(
+     *      path="/user/delete/{id}",
+     *      tags={"User"},
+     *      summary="Delete user by ID",
+     *      description="Returns successful delete information",
+     *      @OA\Response(
+     *          response=200,
+     *          description="successful operation"
+     *       ),
+     *      @OA\Response(response=400, description="Bad request"),
+     *      @OA\Response(response=404, description="Resource Not Found"),
+     *     security={
+     *         {"bearerAuth": {}}
+     *     }
+     * )
+     */
+    public function deleteUser(User $user) {
+        $id=$user->id;
+        $user->delete();
+        return response()->json(['success' => 'User with ID '.$id.' was successfully deleted'], $this->successStatus);
+    }
+
+    /**
+     * @OA\Delete(
+     *      path="/auth-user/delete",
+     *      tags={"User"},
+     *      summary="Delete authorized user",
+     *      description="Returns successful delete information",
+     *      @OA\Response(
+     *          response=200,
+     *          description="successful operation"
+     *       ),
+     *      @OA\Response(response=400, description="Bad request"),
+     *      @OA\Response(response=404, description="Resource Not Found"),
+     *     security={
+     *         {"bearerAuth": {}}
+     *     }
+     * )
+     */
+    public function deleteAuthUser() {
+        $id=$user = Auth::id();
+        Auth::user()->delete();
+        return response()->json(['success' => 'User with ID '.$id.' was successfully deleted'], $this->successStatus);
+    }
 }

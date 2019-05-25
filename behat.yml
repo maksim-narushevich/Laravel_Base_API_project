@@ -1,7 +1,25 @@
 default:
+  suites:
+    default:
+      codeCoverage:
+        enabled: true
+        output: '%paths.base%/logs/behat/coverage'
+        whitelist:
+          directories:
+            - '%paths.base%/src'
+      contexts:
+        - FeatureContext:
+        - Behat\MinkExtension\Context\MinkContext
+        - behatch:context:json
+        - behatch:context:rest
   extensions:
     Laracasts\Behat:
-    # env_path: .env.behat
+    Imbo\BehatApiExtension:
+      apiClient:
+        base_uri: http://nginx:80
+        #timeout: 5.0
+        verify: false
     Behat\MinkExtension:
       default_session: laravel
       laravel: ~
+    Behatch\Extension: ~
