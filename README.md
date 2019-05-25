@@ -34,13 +34,13 @@ App is available on ``8187`` port
 --
 *Mail development server is available on ``8127`` port*
         
-    [http://127.0.0.1:8127](http://127.0.0.1:8127)
+    http://127.0.0.1:8127
     
 **REST API SWAGGER DOCUMENTATION**
 --
 *API documentaion is available to see by navigating to following url*
         
-    [http://127.0.0.1:8127/api/doc](http://127.0.0.1:8127/api/doc)
+    http://127.0.0.1:8127/api/doc
     
 # BEHAT REST API TESTS
 --
