@@ -36,11 +36,10 @@ App is available on ``8187`` port
         
     http://127.0.0.1:8127
     
-###BEHAT REST API TESTS
+### BEHAT REST API TESTS
 --
-*In order to run Behat API tests & setup test environment run following commands
-(previous environment will be restored automatically after Behat tests passed)
-*
+*In order to run Behat API tests & setup test environment run following commands*
+``(previous environment will be restored automatically after Behat tests passed)``
 ```
 php artisan create:database laravel_api_db_test
 vendor/bin/behat --tags @api
