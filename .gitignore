@@ -6,6 +6,7 @@
 /.idea
 .env
 .phpunit.result.cache
+behat.yml
 Homestead.json
 Homestead.yaml
 npm-debug.log
