@@ -6,7 +6,9 @@ Feature: REST API Tests
   @api_purge
   @api
   Scenario: Prepare initial DB condition for running API test scenarios
+    Given setup environment from ".env.behat" file with "test" env
     Given purge DB
+    Given run database migrations
     Given generate secure access Passport JWT tokens
 
   @api_register
@@ -77,3 +79,9 @@ Feature: REST API Tests
     Then set authorization token
     When I delete user with email "test@gmail.com" with request to "/api/v1/auth-user/delete" using HTTP DELETE
     Then the response code is 200
+
+  @api_restore
+  @api
+  Scenario: Restore application environment
+    Given setup environment from ".env.dist" file with "restore_behat" env
+    Given delete temporary ".env.temp" file if exist

@@ -6,7 +6,7 @@ default:
         output: '%paths.base%/logs/behat/coverage'
         whitelist:
           directories:
-            - '%paths.base%/src'
+            - '%paths.base%/app'
       contexts:
         - FeatureContext:
         - Behat\MinkExtension\Context\MinkContext

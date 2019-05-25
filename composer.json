@@ -1,7 +1,7 @@
 {
     "name": "laravel/laravel",
     "type": "project",
-    "description": "The Laravel Framework.",
+    "description": "Laravel Base API.",
     "keywords": [
         "framework",
         "laravel"
@@ -18,6 +18,7 @@
         "laravel/framework": "5.8.*",
         "laravel/passport": "^7.2",
         "laravel/tinker": "^1.0",
+        "league/flysystem": "^1.0",
         "zircote/swagger-php": "^3.0"
     },
     "require-dev": {
@@ -33,7 +34,8 @@
         "laracasts/behat-laravel-extension": "^1.1",
         "mockery/mockery": "^1.0",
         "nunomaduro/collision": "^3.0",
-        "phpunit/phpunit": "^7.5"
+        "phpunit/php-code-coverage": "^7.0",
+        "phpunit/phpunit": "^8"
     },
     "config": {
         "optimize-autoloader": true,
