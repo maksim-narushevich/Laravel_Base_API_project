@@ -7,6 +7,7 @@ Feature: REST API Tests
   @api
   Scenario: Prepare initial DB condition for running API test scenarios
     Given setup environment from ".env.behat" file with "test" env
+    Given create test database "laravel_api_db_test" if not exist
     Given purge DB
     Given run database migrations
     Given generate secure access Passport JWT tokens

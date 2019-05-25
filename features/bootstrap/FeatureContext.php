@@ -238,5 +238,13 @@ class FeatureContext extends ApiContext implements Context, SnippetAcceptingCont
         }
     }
 
+    /**
+     * @Given /^create test database "([^"]*)" if not exist$/
+     * @param $db_name
+     */
+    public function createTestDatabaseIfNotExist($db_name)
+    {
+        Artisan::call('create:database '.$db_name);
+    }
 
 }
