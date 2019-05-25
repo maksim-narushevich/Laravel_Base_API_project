@@ -38,7 +38,7 @@ App is available on ``8187`` port
     
 **REST API SWAGGER DOCUMENTATION**
 --
-*API documentaion is available to see by navigating to following url*
+*API documentaion is available to see by navigating to the following url*
         
     http://127.0.0.1:8127/api/doc
     
