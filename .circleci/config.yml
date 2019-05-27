@@ -1,5 +1,11 @@
 version: 2
 jobs:
+  build:
+    docker:
+      - image: docker:stable
+    steps:
+      - checkout
+      - run: docker info
    deploy:
        machine:
          enabled: true
@@ -13,7 +19,8 @@ jobs:
                ssh -t $SSH_USER_VPS@$SSH_HOST_VPS "cd $PROJECT_DIR && touch test.txt && ls -la"
 workflows:
   version: 2
-  deploy:
+  build-and-deploy:
+      - build
 #    jobs:
 #      - build:
 #                filters:
