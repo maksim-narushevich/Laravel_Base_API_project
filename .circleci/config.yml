@@ -12,6 +12,7 @@ jobs:
         - image: php:7.2.4-fpm
         - image: mysql:5.7
           environment:
+            MYSQL_ALLOW_EMPTY_PASSWORD: yes
             MYSQL_ROOT_PASSWORD: root
             MYSQL_DATABASE: laravel_api_db_test
             MYSQL_USER: docker
@@ -19,30 +20,30 @@ jobs:
         - image: selenium/standalone-chrome:3
       steps:
         - checkout
-#        - run: apt-get update && apt-get install --assume-yes apt-utils
-#        - run: apt-get install -y  curl  wget  git  libzip-dev  expect
-#        - run: docker-php-ext-configure zip --with-libzip
-#        - run: printf "\n" | pecl install redis
-#        - run: docker-php-ext-install -j$(nproc) pdo_mysql zip mysqli
-#        - run: docker-php-ext-enable redis
-#        - run: pecl install xdebug && docker-php-ext-enable xdebug
-#        - run: curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
-#        - run: composer install
-#        - run: composer self-update
-#        - run: composer install -n --prefer-dist --ignore-platform-reqs
-#        - save_cache:
-#            key: composer-v1-{{ checksum "composer.lock" }}
-#            paths:
-#              - vendor
-#        - run: cp behat.dist.remote behat.yml
-#        - run: php artisan create:database laravel_api_db_test
-#        - run: php artisan migrate
-#        - run: php artisan passport:install
-#        - run:
-#            name: Run web server
-#            command: php bin/console server:run --env=test -vvv 127.0.0.1:8080 > server.log 2>&1
-#            background: true
-#        - run: vendor/bin/behat --tags @api
+        - run: apt-get update && apt-get install --assume-yes apt-utils
+        - run: apt-get install -y  curl  wget  git  libzip-dev  expect
+        - run: docker-php-ext-configure zip --with-libzip
+        - run: printf "\n" | pecl install redis
+        - run: docker-php-ext-install -j$(nproc) pdo_mysql zip mysqli
+        - run: docker-php-ext-enable redis
+        - run: pecl install xdebug && docker-php-ext-enable xdebug
+        - run: curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+        - run: composer install
+        - run: composer self-update
+        - run: composer install -n --prefer-dist --ignore-platform-reqs
+        - save_cache:
+            key: composer-v1-{{ checksum "composer.lock" }}
+            paths:
+              - vendor
+        - run: cp behat.dist.remote behat.yml
+        - run: php artisan create:database laravel_api_db_test
+        - run: php artisan migrate
+        - run: php artisan passport:install
+        - run:
+            name: Run web server
+            command: php bin/console server:run --env=test -vvv 127.0.0.1:8080 > server.log 2>&1
+            background: true
+        - run: vendor/bin/behat --tags @api
 
     deploy:
       machine:
