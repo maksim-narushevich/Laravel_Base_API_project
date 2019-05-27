@@ -22,43 +22,32 @@ jobs:
       - image: selenium/standalone-chrome:3
     steps:
       - checkout
-      - run:
-          command: sudo docker-php-ext-install -j$(nproc) pdo_mysql zip mysqli
-      - run:
-          command: sudo composer self-update
-      - run:
-          command: sudo composer install -n --prefer-dist --ignore-platform-reqs
+      - run: sudo docker-php-ext-install -j$(nproc) pdo_mysql zip mysqli
+      - run: sudo composer self-update
+      - run: sudo composer install -n --prefer-dist --ignore-platform-reqs
       - save_cache:
           key: composer-v1-{{ checksum "composer.lock" }}
           paths:
             - vendor
-      - run:
-          command: cp behat.dist.remote behat.yml
-      - run:
-          command: cp .env.behat.circleci .env
-      - run:
-          command: php artisan key:generate
-      - run:
-          command: php artisan migrate
-      - run:
-          command: php artisan passport:install
+      - run: cp behat.dist.remote behat.yml
+      - run: cp .env.behat.circleci .env
+      - run: php artisan key:generate
+      - run: php artisan migrate
+      - run: php artisan passport:install
       - run:
           name: Run web server
           command: php artisan serve --port=8087
           background: true
-      - run:
-          command: curl http://127.0.0.1:8087 &> /dev/null &
-      - run:
-          command: cat .env
-      - run:
-          command: vendor/bin/behat --tags @api_circleci
+#      - run: curl http://127.0.0.1:8087 &> /dev/null &
+#      - run: cat .env
+      - run: vendor/bin/behat --tags @api_circleci
   deploy:
     machine:
       enabled: true
     steps:
       - add_ssh_keys:
           fingerprints:
-            - 0c:33:a8:8c:40:06:fa:ae:13:c8:63:a6:e7:52:a1:b0
+            - "0c:33:a8:8c:40:06:fa:ae:13:c8:63:a6:e7:52:a1:b0"
       - run:
           name: Deploy Over SSH to VPS server
           command: |
