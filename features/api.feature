@@ -12,8 +12,17 @@ Feature: REST API Tests
     Given run database migrations
     Given generate secure access Passport JWT tokens
 
+  @api_circleci
+  Scenario: Prepare initial DB condition for running API test scenarios
+    Given setup environment from ".env.behat.circleci" file with "test" env
+    Given create test database "laravel_api_db_test" if not exist
+    Given purge DB
+    Given run database migrations
+    Given generate secure access Passport JWT tokens
+
   @api_register
   @api
+  @api_circleci
   Scenario: Register new User
     Given the "Content-Type" request header is "application/json"
     Given the request body is:
@@ -31,6 +40,7 @@ Feature: REST API Tests
 
   @api_login
   @api
+  @api_circleci
   Scenario: Login as specific user,getting JWT token and go to 'Users' page
     Given the "Content-Type" request header is "application/json"
     Given the request body is:
@@ -59,6 +69,7 @@ Feature: REST API Tests
 
   @api_delete
   @api
+  @api_circleci
   Scenario: Delete specific user,getting JWT token and go to 'Users' page
     Given the "Content-Type" request header is "application/json"
     Given the request body is:
@@ -83,6 +94,7 @@ Feature: REST API Tests
 
   @api_restore
   @api
+  @api_circleci
   Scenario: Restore application environment
     Given setup environment from ".env.dist" file with "restore_behat" env
     Given delete temporary ".env.temp" file if exist
