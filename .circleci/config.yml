@@ -9,7 +9,15 @@ jobs:
         - run: docker info
     test:
       docker:
-        - image: circleci/php:7.2.9-fpm
+        - image: circleci/php:7.3-stretch-node-browsers
+          environment:
+            APP_ENV: testing
+            DB_CONNECTION: mysql
+            DB_DATABASE: laravel_api_db_test
+            DB_USERNAME: root
+            DB_PASSWORD: laraapi
+            SESSION_DRIVER: database
+            CACHE_DRIVER: file
         - image: circleci/mysql:5.7.26
           environment:
             MYSQL_ALLOW_EMPTY_PASSWORD: yes
@@ -29,6 +37,7 @@ jobs:
               - vendor
         - run: cp behat.dist.remote behat.yml
         - run: cp .env.behat.deploy .env
+        - run: php artisan key:generate
         - run: php artisan migrate
         - run: php artisan passport:install
         - run:
