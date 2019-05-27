@@ -13,7 +13,7 @@ jobs:
                ssh -t $SSH_USER_VPS@$SSH_HOST_VPS "cd $PROJECT_DIR && touch test.txt && ls -la"
 workflows:
   version: 2
-  build-and-deploy:
+  deploy:
 #    jobs:
 #      - build:
 #                filters:
