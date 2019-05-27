@@ -1,66 +1,76 @@
-version: 2.1
+version: 2
 jobs:
-
-    build:
-      docker:
-          - image: docker:stable
-      steps:
-        - checkout
-        - run: docker info
-    test:
-      docker:
-        - image: circleci/php:7.3-stretch-node-browsers
-          environment:
-            DB_HOST: 127.0.0.1
-            DB_DATABASE: $MYSQL_DATABASE
-            DB_USERNAME: docker
-        - image: circleci/mysql:5.7.26
-          environment:
-            MYSQL_DATABASE: $MYSQL_DATABASE
-            MYSQL_USER: $MYSQL_USER
-            MYSQL_PASSWORD: $MYSQL_PASSWORD
-        - image: selenium/standalone-chrome:3
-      steps:
-        - checkout
-        - run: sudo docker-php-ext-install -j$(nproc) pdo_mysql zip mysqli
-        - run: sudo composer self-update
-        - run: sudo composer install -n --prefer-dist --ignore-platform-reqs
-        - save_cache:
-            key: composer-v1-{{ checksum "composer.lock" }}
-            paths:
-              - vendor
-        - run: cp behat.dist.remote behat.yml
-        - run: cp .env.behat.circleci .env
-        - run: php artisan key:generate
-        - run: php artisan migrate
-        - run: php artisan passport:install
-        - run:
-            name: Run web server
-            command: php artisan serve --port=8087
-            background: true
-        - run: curl http://127.0.0.1:8087 &> /dev/null &
-        - run: cat .env
-        - run: vendor/bin/behat --tags @api_circleci
-
-    deploy:
-      machine:
-        enabled: true
-      steps:
-        - add_ssh_keys:
-            fingerprints:
-              - "0c:33:a8:8c:40:06:fa:ae:13:c8:63:a6:e7:52:a1:b0"
-        - run:
-            name: Deploy Over SSH to VPS server 
-            command: |
-              ssh -t $SSH_USER_VPS@$SSH_HOST_VPS "cd $PROJECT_DIR && touch test.txt && ls -la"
+  build:
+    docker:
+      - image: docker:stable
+    steps:
+      - checkout
+      - run:
+          command: docker info
+  test:
+    docker:
+      - image: circleci/php:7.3-stretch-node-browsers
+        environment:
+          DB_HOST: 127.0.0.1
+          DB_DATABASE: laravel_api_db_test
+          DB_USERNAME: docker
+      - image: circleci/mysql:5.7.26
+        environment:
+          MYSQL_DATABASE: laravel_api_db_test
+          MYSQL_USER: docker
+          MYSQL_PASSWORD: laraapi
+      - image: selenium/standalone-chrome:3
+    steps:
+      - checkout
+      - run:
+          command: sudo docker-php-ext-install -j$(nproc) pdo_mysql zip mysqli
+      - run:
+          command: sudo composer self-update
+      - run:
+          command: sudo composer install -n --prefer-dist --ignore-platform-reqs
+      - save_cache:
+          key: composer-v1-{{ checksum "composer.lock" }}
+          paths:
+            - vendor
+      - run:
+          command: cp behat.dist.remote behat.yml
+      - run:
+          command: cp .env.behat.circleci .env
+      - run:
+          command: php artisan key:generate
+      - run:
+          command: php artisan migrate
+      - run:
+          command: php artisan passport:install
+      - run:
+          name: Run web server
+          command: php artisan serve --port=8087
+          background: true
+      - run:
+          command: curl http://127.0.0.1:8087 &> /dev/null &
+      - run:
+          command: cat .env
+      - run:
+          command: vendor/bin/behat --tags @api_circleci
+  deploy:
+    machine:
+      enabled: true
+    steps:
+      - add_ssh_keys:
+          fingerprints:
+            - 0c:33:a8:8c:40:06:fa:ae:13:c8:63:a6:e7:52:a1:b0
+      - run:
+          name: Deploy Over SSH to VPS server
+          command: |
+            ssh -t $SSH_USER_VPS@$SSH_HOST_VPS "cd $PROJECT_DIR && touch test.txt && ls -la"
 workflows:
   version: 2
   build-test-and-deploy:
     jobs:
       - build:
           filters:
-              branches:
-                only: develop
+            branches:
+              only: develop
       - test:
           filters:
             branches:
