@@ -39,7 +39,8 @@ jobs:
             command: php artisan serve --port=8087
             background: true
         - run: curl http://127.0.0.1:8087 &> /dev/null &
-        - run: sudo vendor/bin/behat --tags @api_circleci
+        - run: cat .env
+        - run: vendor/bin/behat --tags @api_circleci
 
     deploy:
       machine:
