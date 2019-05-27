@@ -20,11 +20,7 @@ jobs:
         - image: selenium/standalone-chrome:3
       steps:
         - checkout
-#        - run: sudo apt-get update && sudo apt-get install --assume-yes apt-utils
-#        - run: sudo apt-get install -y  curl  wget  git  libzip-dev  expect
-#        - run: sudo docker-php-ext-configure zip --with-libzip
         - run: sudo docker-php-ext-install -j$(nproc) pdo_mysql zip mysqli
-
         - run: sudo composer self-update
         - run: sudo composer install -n --prefer-dist --ignore-platform-reqs
         - save_cache:
