@@ -14,7 +14,7 @@ Feature: REST API Tests
 
   @api_circleci
   Scenario: Prepare initial DB condition for running API test scenarios
-    Given setup environment from ".env.behat.circleci" file with "test" env
+    #Given setup environment from ".env.behat.circleci" file with "test" env
     Given create test database "laravel_api_db_test" if not exist
     Given purge DB
     Given run database migrations
