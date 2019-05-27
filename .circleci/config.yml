@@ -32,9 +32,9 @@ jobs:
         - run: php artisan passport:install
         - run:
             name: Run web server
-            command: php artisan serve --port=8080
+            command: php artisan serve --port=8087
             background: true
-        - run: curl http://127.0.0.1:8080
+        - run: curl http://127.0.0.1:8087 &> /dev/null &
         - run: sudo vendor/bin/behat --tags @api
 
     deploy:
