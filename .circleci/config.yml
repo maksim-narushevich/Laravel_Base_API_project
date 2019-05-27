@@ -36,6 +36,7 @@ jobs:
             paths:
               - vendor
         - run: cp behat.dist.remote behat.yml
+        - run: cp .env.behat .env
         - run: php artisan create:database laravel_api_db_test
         - run: php artisan migrate
         - run: php artisan passport:install
