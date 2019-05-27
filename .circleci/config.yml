@@ -12,13 +12,7 @@ jobs:
       - image: circleci/php:7.3-stretch-node-browsers
         environment:
           DB_HOST: 127.0.0.1
-          DB_DATABASE: $MYSQL_DATABASE
-          DB_USERNAME: $MYSQL_USER
       - image: circleci/mysql:5.7.26
-        environment:
-          MYSQL_DATABASE: $MYSQL_DATABASE
-          MYSQL_USER: $MYSQL_USER
-          MYSQL_PASSWORD: $MYSQL_PASSWORD
       - image: selenium/standalone-chrome:3
     steps:
       - checkout
