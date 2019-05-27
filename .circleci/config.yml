@@ -28,33 +28,23 @@ jobs:
         - image: selenium/standalone-chrome:3
       steps:
         - checkout
+        - run: sudo docker-php-ext-install -j$(nproc) pdo_mysql zip mysqli
+        - run: sudo composer self-update
+        - run: sudo composer install -n --prefer-dist --ignore-platform-reqs
+        - save_cache:
+            key: composer-v1-{{ checksum "composer.lock" }}
+            paths:
+              - vendor
+        - run: cp behat.dist.remote behat.yml
+        - run: cp .env.behat.deploy .env
+        - run: php artisan key:generate
+        - run: php artisan migrate
+        - run: php artisan passport:install
         - run:
-            name: Waiting for MySQL to be ready
-            command: |
-              for i in `seq 1 30`;
-              do
-                nc -z 127.0.0.1 3306 && echo Success && exit 0
-                echo -n .
-                sleep 1
-              done
-              echo Failed waiting for MySQL && exit 1
-#        - run: sudo docker-php-ext-install -j$(nproc) pdo_mysql zip mysqli
-#        - run: sudo composer self-update
-#        - run: sudo composer install -n --prefer-dist --ignore-platform-reqs
-#        - save_cache:
-#            key: composer-v1-{{ checksum "composer.lock" }}
-#            paths:
-#              - vendor
-#        - run: cp behat.dist.remote behat.yml
-#        - run: cp .env.behat.deploy .env
-#        - run: php artisan key:generate
-#        - run: php artisan migrate
-#        - run: php artisan passport:install
-#        - run:
-#            name: Run web server
-#            command: php bin/console server:run --env=test -vvv 127.0.0.1:8080 > server.log 2>&1
-#            background: true
-#        - run: vendor/bin/behat --tags @api
+            name: Run web server
+            command: php bin/console server:run --env=test -vvv 127.0.0.1:8080 > server.log 2>&1
+            background: true
+        - run: vendor/bin/behat --tags @api
 
     deploy:
       machine:
