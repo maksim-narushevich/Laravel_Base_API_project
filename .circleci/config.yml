@@ -20,15 +20,15 @@ jobs:
         - image: selenium/standalone-chrome:3
       steps:
         - checkout
-        - run: apt-get update && apt-get install --assume-yes apt-utils
-        - run: apt-get install -y  curl  wget  git  libzip-dev  expect
-        - run: docker-php-ext-configure zip --with-libzip
-        - run: printf "\n" | pecl install redis
-        - run: docker-php-ext-install -j$(nproc) pdo_mysql zip mysqli
-        - run: docker-php-ext-enable redis
-        - run: pecl install xdebug && docker-php-ext-enable xdebug
-        - run: curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
-        - run: composer install
+#        - run: apt-get update && apt-get install --assume-yes apt-utils
+#        - run: apt-get install -y  curl  wget  git  libzip-dev  expect
+#        - run: docker-php-ext-configure zip --with-libzip
+#        - run: printf "\n" | pecl install redis
+#        - run: docker-php-ext-install -j$(nproc) pdo_mysql zip mysqli
+#        - run: docker-php-ext-enable redis
+#        - run: pecl install xdebug && docker-php-ext-enable xdebug
+#        - run: curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+#        - run: composer install
         - run: composer self-update
         - run: composer install -n --prefer-dist --ignore-platform-reqs
         - save_cache:
