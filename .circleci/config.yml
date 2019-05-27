@@ -16,7 +16,6 @@ jobs:
             MYSQL_ROOT_PASSWORD: root
             MYSQL_DATABASE: laravel_api_db_test
             MYSQL_USER: docker
-            MYSQL_HOST: 127.0.0.1
             MYSQL_PASSWORD: laraapi
         - image: selenium/standalone-chrome:3
       steps:
@@ -36,10 +35,6 @@ jobs:
             key: composer-v1-{{ checksum "composer.lock" }}
             paths:
               - vendor
-        - run:
-            name: Create non-admin user
-            command: |
-              mysql -u root -e "CREATE user docker IDENTIFIED BY 'laraapi';"
         - run: cp behat.dist.remote behat.yml
         - run: cp .env.behat.deploy .env
         - run: php artisan create:database laravel_api_db_test
