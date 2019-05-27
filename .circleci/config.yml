@@ -12,7 +12,7 @@ jobs:
       steps:
         - add_ssh_keys:
             fingerprints:
-              - "82:d4:5f:0c:49:42:06:21:03:af:13:e1:aa:da:42:13"
+              - "0c:33:a8:8c:40:06:fa:ae:13:c8:63:a6:e7:52:a1:b0"
         - run:
             name: Deploy Over SSH to VPS server 
             command: |
