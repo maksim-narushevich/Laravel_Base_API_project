@@ -10,6 +10,10 @@ jobs:
     test:
       docker:
         - image: circleci/php:7.3-stretch-node-browsers
+          environment:
+            DB_HOST: 127.0.0.1
+            DB_DATABASE: laravel_api_db_test
+            DB_USERNAME: docker
         - image: circleci/mysql:5.7.26
           environment:
             MYSQL_DATABASE: laravel_api_db_test
@@ -25,7 +29,7 @@ jobs:
             key: composer-v1-{{ checksum "composer.lock" }}
             paths:
               - vendor
-        - run: cp behat.dist.remote behat.yml
+        - run: cp behat.dist behat.yml
         - run: cp .env.behat.deploy .env
         - run: php artisan key:generate
         - run: php artisan migrate
