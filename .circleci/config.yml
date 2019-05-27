@@ -35,7 +35,11 @@ jobs:
         - run: php artisan key:generate
         - run: php artisan migrate
         - run: php artisan passport:install
-        - run: php -S 127.0.0.1:8080 -t ./public &>  sudo vendor/bin/behat --tags @api
+        - run:
+            name: Run web server
+            command: php -S 127.0.0.1:8080 -t ./public &> /dev/null &
+            background: true
+        - run: sudo vendor/bin/behat --tags @api
 
     deploy:
       machine:
