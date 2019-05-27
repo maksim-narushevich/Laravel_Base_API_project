@@ -9,8 +9,8 @@ jobs:
         - run: docker info
     test:
       docker:
-        - image: php:7
-        - image: mysql:5.7.21
+        - image: php:7.2.4-fpm
+        - image: mysql:5.7
         - image: selenium/standalone-chrome:3
           environment:
             MYSQL_ALLOW_EMPTY_PASSWORD: yes
@@ -20,8 +20,15 @@ jobs:
             MYSQL_PASSWORD: laraapi
       steps:
         - checkout
-        - run: apt update && install zlib1g-dev libsqlite3-dev
-        - run: docker-php-ext-install zip
+        - run: apt-get update && apt-get install --assume-yes apt-utils
+        - run: apt-get install -y  curl  wget  git  libzip-dev  expect
+        - run: docker-php-ext-configure zip --with-libzip
+        - run: printf "\n" | pecl install redis
+        - run: docker-php-ext-install -j$(nproc) pdo_mysql zip mysqli
+        - run: docker-php-ext-enable redis
+        - run: pecl install xdebug && docker-php-ext-enable xdebug
+        - run: curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+        - run: composer install
         - run: composer self-update
         - run: composer install -n --prefer-dist --ignore-platform-reqs
         - save_cache:
