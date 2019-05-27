@@ -40,7 +40,7 @@ jobs:
             name: Install MySQL CLI
             command: |
               sudo apt-get install mysql-client
-              mysql -h 127.0.0.1 -u docker
+              mysql -h mysql -u docker -plaraapi
         - run: php artisan key:generate
         - run: php artisan migrate
         - run: php artisan passport:install
