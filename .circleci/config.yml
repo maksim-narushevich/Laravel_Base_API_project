@@ -29,8 +29,8 @@ jobs:
 #        - run: pecl install xdebug && docker-php-ext-enable xdebug
 #        - run: curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 #        - run: composer install
-        - run: composer self-update
-        - run: composer install -n --prefer-dist --ignore-platform-reqs
+        - run: sudo composer self-update
+        - run: sudo composer install -n --prefer-dist --ignore-platform-reqs
         - save_cache:
             key: composer-v1-{{ checksum "composer.lock" }}
             paths:
