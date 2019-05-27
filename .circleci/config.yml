@@ -36,6 +36,10 @@ jobs:
             key: composer-v1-{{ checksum "composer.lock" }}
             paths:
               - vendor
+        - run:
+            name: Create non-admin user
+            command: |
+              sudo mysql -u root -e "CREATE user docker IDENTIFIED BY 'laraapi';"
         - run: cp behat.dist.remote behat.yml
         - run: cp .env.behat.deploy .env
         - run: php artisan create:database laravel_api_db_test
