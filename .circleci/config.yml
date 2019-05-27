@@ -1,31 +1,28 @@
-version: 2
+version: 2.1
 jobs:
-  build:
-    docker:
-      - image: docker:stable
-    steps:
-      - checkout
-      - run: docker info
-   deploy:
-       machine:
-         enabled: true
-       steps:
-          - add_ssh_keys:
-                     fingerprints:
-                       - "82:d4:5f:0c:49:42:06:21:03:af:13:e1:aa:da:42:13"
-          - run:
-             name: Deploy Over SSH to VPS server
-             command: |
-               ssh -t $SSH_USER_VPS@$SSH_HOST_VPS "cd $PROJECT_DIR && touch test.txt && ls -la"
+    build:
+      docker:
+          - image: docker:stable
+      steps:
+        - checkout
+        - run: docker info
+    deploy:
+      machine:
+        enabled: true
+      steps:
+        - add_ssh_keys:
+            fingerprints:
+              - "82:d4:5f:0c:49:42:06:21:03:af:13:e1:aa:da:42:13"
+        - run:
+            name: Deploy Over SSH to VPS server
+            command: |
+              ssh -t $SSH_USER_VPS@$SSH_HOST_VPS "cd $PROJECT_DIR && touch test.txt && ls -la"
 workflows:
   version: 2
   build_and_test:
     jobs:
       - build
       - deploy:
-
-          #requires:
-          #  - build
           filters:
             branches:
               only: feature/Setting_up_CI_CD
