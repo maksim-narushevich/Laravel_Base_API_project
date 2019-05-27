@@ -12,13 +12,13 @@ jobs:
       - image: circleci/php:7.3-stretch-node-browsers
         environment:
           DB_HOST: 127.0.0.1
-          DB_DATABASE: laravel_api_db_test
-          DB_USERNAME: docker
+          DB_DATABASE: $MYSQL_DATABASE
+          DB_USERNAME: $MYSQL_USER
       - image: circleci/mysql:5.7.26
         environment:
-          MYSQL_DATABASE: laravel_api_db_test
-          MYSQL_USER: docker
-          MYSQL_PASSWORD: laraapi
+          MYSQL_DATABASE: $MYSQL_DATABASE
+          MYSQL_USER: $MYSQL_USER
+          MYSQL_PASSWORD: $MYSQL_PASSWORD
       - image: selenium/standalone-chrome:3
     steps:
       - checkout
@@ -38,8 +38,6 @@ jobs:
           name: Run web server
           command: php artisan serve --port=8087
           background: true
-#      - run: curl http://127.0.0.1:8087 &> /dev/null &
-#      - run: cat .env
       - run: vendor/bin/behat --tags @api_circleci
   deploy:
     machine:
