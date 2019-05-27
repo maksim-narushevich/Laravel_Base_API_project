@@ -11,9 +11,12 @@ jobs:
       docker:
         - image: php:7.2.4-fpm
         - image: mysql:5.7
-        - image: selenium/standalone-chrome:3
           environment:
             MYSQL_ROOT_PASSWORD: root
+            MYSQL_DATABASE: laravel_api_db_test
+            MYSQL_USER: docker
+            MYSQL_PASSWORD: laraapi
+        - image: selenium/standalone-chrome:3
       steps:
         - checkout
 #        - run: apt-get update && apt-get install --assume-yes apt-utils
