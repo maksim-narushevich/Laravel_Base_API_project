@@ -94,7 +94,6 @@ Feature: REST API Tests
 
   @api_restore
   @api
-  @api_circleci
   Scenario: Restore application environment
     Given setup environment from ".env.dist" file with "restore_behat" env
     Given delete temporary ".env.temp" file if exist
