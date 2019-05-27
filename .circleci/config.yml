@@ -14,10 +14,14 @@ jobs:
         - image: selenium/standalone-chrome:3
           environment:
             MYSQL_ALLOW_EMPTY_PASSWORD: yes
+            MYSQL_ROOT_PASSWORD: root
+            MYSQL_DATABASE: laravel_api_db_test
+            MYSQL_USER: docker
+            MYSQL_PASSWORD: laraapi
       steps:
         - checkout
-        - run: sudo apt update && sudo apt install zlib1g-dev libsqlite3-dev
-        - run: sudo docker-php-ext-install zip
+        - run: apt update && sudo install zlib1g-dev libsqlite3-dev
+        - run: docker-php-ext-install zip
         - run: composer self-update
         - run: composer install -n --prefer-dist --ignore-platform-reqs
         - save_cache:
