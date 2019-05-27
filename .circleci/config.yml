@@ -35,8 +35,7 @@ jobs:
         - run: php artisan key:generate
         - run: php artisan migrate
         - run: php artisan passport:install
-        - run: php -S 127.0.0.1:8080 -t ./public &> /dev/null &
-        - run: php -S 127.0.0.1:8080 -t ./public &> /dev/null && vendor/bin/behat --tags @api
+        - run: php -S 127.0.0.1:8080 -t ./public &>  vendor/bin/behat --tags @api
 
     deploy:
       machine:
