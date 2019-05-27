@@ -29,8 +29,8 @@ jobs:
             key: composer-v1-{{ checksum "composer.lock" }}
             paths:
               - vendor
-        - run: cp behat.dist behat.yml
-        - run: cp .env.behat.deploy .env
+        - run: cp behat.dist.remote behat.yml
+        - run: cp .env.behat .env
         - run: php artisan key:generate
         - run: php artisan migrate
         - run: php artisan passport:install
