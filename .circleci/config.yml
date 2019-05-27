@@ -27,11 +27,6 @@ jobs:
               - vendor
         - run: cp behat.dist.remote behat.yml
         - run: cp .env.behat.deploy .env
-#        - run:
-#            name: Install MySQL CLI
-#            command: |
-#              sudo apt-get install mysql-client
-#              mysql -h 127.0.0.1 -u docker -plaraapi
         - run: php artisan key:generate
         - run: php artisan migrate
         - run: php artisan passport:install
@@ -39,6 +34,7 @@ jobs:
             name: Run web server
             command: php -S 127.0.0.1:8080 -t ./public &> /dev/null &
             background: true
+        - run: curl http://127.0.0.1:8080
         - run: sudo vendor/bin/behat --tags @api
 
     deploy:
