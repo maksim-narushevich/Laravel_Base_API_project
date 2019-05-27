@@ -25,4 +25,4 @@ workflows:
           #  - build
           filters:
             branches:
-              only: master
+              only: feature/Setting_up_CI_CD
