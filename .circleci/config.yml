@@ -72,9 +72,9 @@ jobs:
       - run: ssh $SSH_USER_VPS@$SSH_HOST_VPS "cd $PROJECT_DIR && docker exec laravel_api composer install"
       - run: ssh $SSH_USER_VPS@$SSH_HOST_VPS "cd $PROJECT_DIR && docker exec laravel_api cp .env.dist .env"
       - run: ssh $SSH_USER_VPS@$SSH_HOST_VPS "cd $PROJECT_DIR && docker exec laravel_api php artisan key:generate"
-      - run: ssh $SSH_USER_VPS@$SSH_HOST_VPS "cd $PROJECT_DIR && docker exec laravel_api cat .env"
       - run: ssh $SSH_USER_VPS@$SSH_HOST_VPS "cd $PROJECT_DIR && docker exec laravel_api php artisan migrate"
       - run: ssh $SSH_USER_VPS@$SSH_HOST_VPS "cd $PROJECT_DIR && docker exec laravel_api php artisan passport:install"
+      - run: ssh $SSH_USER_VPS@$SSH_HOST_VPS "cd $PROJECT_DIR && docker image prune -a -f"
 
 
 workflows:
@@ -84,7 +84,7 @@ workflows:
       - build:
           filters:
             branches:
-              only: feature/Setting_up_CI_CD
+              only: develop
       - test:
           filters:
             branches:
@@ -94,4 +94,4 @@ workflows:
             - build
           filters:
             branches:
-              only: feature/Setting_up_CI_CD
+              only: develop
