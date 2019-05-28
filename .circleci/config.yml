@@ -75,6 +75,7 @@ jobs:
       - run: ssh $SSH_USER_VPS@$SSH_HOST_VPS "cd $PROJECT_DIR && docker exec laravel_api php artisan migrate"
       - run: ssh $SSH_USER_VPS@$SSH_HOST_VPS "cd $PROJECT_DIR && docker exec laravel_api php artisan passport:install"
 
+
 workflows:
   version: 2
   build-test-and-deploy:
