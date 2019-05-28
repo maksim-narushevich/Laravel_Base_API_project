@@ -17,9 +17,9 @@ jobs:
             sudo mv /tmp/docker/* /usr/bin
       - run: |
           TAG=0.1.$CIRCLE_BUILD_NUM
-          docker build -t   maksim1990/laravelBaseApi/dev:$TAG -f ./docker/php/Dockerfile .     
+          docker build -t   maksim1990/laravel_base_api/dev:$TAG -f ./docker/php/Dockerfile .     
           docker login -u $DOCKER_USER -p $DOCKER_PASS
-          docker push maksim1990/laravelBaseApi/dev:$TAG
+          docker push maksim1990/laravel_base_api/dev:$TAG
   test:
     docker:
       - image: circleci/php:7.3-stretch-node-browsers
