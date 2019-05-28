@@ -1,15 +1,14 @@
 version: '3.7'
 services:
     lara_app:
-        build:
-            context: ./
-            dockerfile: ./docker/php/Dockerfile
+        image: maksim1990/laravel_base_api:latest
         container_name: laravel_api
         user: "${UID}"
         volumes:
-            - ./:/var/www
+            - data-volume:/var/www
             - ./data/composer:/.composer
             - ./logs/laravel:/var/www/var/logs:cached
+            - hosts-volume:/etc/nginx/conf.d
         depends_on:
             - mysql
             - redis
@@ -19,8 +18,8 @@ services:
             - "${APP_HTTP_PORT}:80"
             - "${APP_HTTPS_PORT}:443"
         volumes:
-            - ./docker/nginx/hosts:/etc/nginx/conf.d
-            - ./:/var/www
+            - hosts-volume:/etc/nginx/conf.d
+            - data-volume:/var/www
             - ./logs/nginx/:/var/log/nginx:cached
         depends_on:
             - lara_app
@@ -46,3 +45,6 @@ services:
         ports:
             - 25
             - ${APP_MAIL_PORT}:80
+volumes:
+  data-volume:
+  hosts-volume:
