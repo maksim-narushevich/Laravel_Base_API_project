@@ -69,12 +69,12 @@ jobs:
             curl -L -o /tmp/docker-$VER.tgz https://download.docker.com/linux/static/stable/x86_64/docker-$VER.tgz
             sudo tar -xz -C /tmp -f /tmp/docker-$VER.tgz
             sudo mv /tmp/docker/* /usr/bin
-       - run: sudo apk --update --no-cache add sshpass openssh rsync tree
-       - run: sed -e "s/\${APP_HTTP_PORT}/${DEV_HTTP_PORT}/g; s/\${APP_HTTPS_PORT}/${DEV_HTTPS_PORT}/g; s/\${APP_REDIS_PORT}/${DEV_REDIS_PORT}/g; s/\${APP_MYSQL_PORT}/${DEV_MYSQL_PORT}/g; s/\${APP_MAIL_PORT}/${DEV_MAIL_PORT}/g;"  docker-compose.dev.tpl.yml > docker-compose.yml
+      - run: sudo apk --update --no-cache add sshpass openssh rsync tree
+      - run: sed -e "s/\${APP_HTTP_PORT}/${DEV_HTTP_PORT}/g; s/\${APP_HTTPS_PORT}/${DEV_HTTPS_PORT}/g; s/\${APP_REDIS_PORT}/${DEV_REDIS_PORT}/g; s/\${APP_MYSQL_PORT}/${DEV_MYSQL_PORT}/g; s/\${APP_MAIL_PORT}/${DEV_MAIL_PORT}/g;"  docker-compose.dev.tpl.yml > docker-compose.yml
       #- run:
-         # name: Deploy Over SSH to VPS server
+          #name: Deploy Over SSH to VPS server
           #command: |
-           # ssh -t $SSH_USER_VPS@$SSH_HOST_VPS "cd $PROJECT_DIR && touch test.txt && ls -la"
+            #ssh -t $SSH_USER_VPS@$SSH_HOST_VPS "cd $PROJECT_DIR && touch test.txt && ls -la"
 workflows:
   version: 2
   build-test-and-deploy:
