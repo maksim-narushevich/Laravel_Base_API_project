@@ -11,13 +11,13 @@ jobs:
     docker:
       - image: circleci/php:7.3-stretch-node-browsers
         environment:
-          DB_USERNAME: docker
+          DB_HOST: 127.0.0.1
+          DB_USERNAME: "$MYSQL_USER"
       - image: circleci/mysql:5.7.26
         environment:
-          MYSQL_DATABASE: laravel_api_db_test
-          MYSQL_USER: docker
-          MYSQL_PASSWORD: laraapi
-      - image: selenium/standalone-chrome:3
+          MYSQL_DATABASE: "$MYSQL_DATABASE"
+          MYSQL_USER: "$MYSQL_USER"
+          MYSQL_PASSWORD: "$MYSQL_PASSWORD"
     steps:
       - checkout
       - run: sudo docker-php-ext-install -j$(nproc) pdo_mysql zip mysqli
