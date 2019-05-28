@@ -59,10 +59,22 @@ jobs:
       - add_ssh_keys:
           fingerprints:
             - "0c:33:a8:8c:40:06:fa:ae:13:c8:63:a6:e7:52:a1:b0"
+      - setup_remote_docker:
+          docker_layer_caching: true
       - run:
-          name: Deploy Over SSH to VPS server
+          name: Install Docker client
           command: |
-            ssh -t $SSH_USER_VPS@$SSH_HOST_VPS "cd $PROJECT_DIR && touch test.txt && ls -la"
+            set -x
+            VER="18.06.0-ce"
+            curl -L -o /tmp/docker-$VER.tgz https://download.docker.com/linux/static/stable/x86_64/docker-$VER.tgz
+            sudo tar -xz -C /tmp -f /tmp/docker-$VER.tgz
+            sudo mv /tmp/docker/* /usr/bin
+       - run: sudo apk --update --no-cache add sshpass openssh rsync tree
+       - run: sed -e "s/\${APP_HTTP_PORT}/${DEV_HTTP_PORT}/g; s/\${APP_HTTPS_PORT}/${DEV_HTTPS_PORT}/g; s/\${APP_REDIS_PORT}/${DEV_REDIS_PORT}/g; s/\${APP_MYSQL_PORT}/${DEV_MYSQL_PORT}/g; s/\${APP_MAIL_PORT}/${DEV_MAIL_PORT}/g;"  docker-compose.dev.tpl.yml > docker-compose.yml
+      #- run:
+         # name: Deploy Over SSH to VPS server
+          #command: |
+           # ssh -t $SSH_USER_VPS@$SSH_HOST_VPS "cd $PROJECT_DIR && touch test.txt && ls -la"
 workflows:
   version: 2
   build-test-and-deploy:
@@ -70,12 +82,12 @@ workflows:
       - build:
           filters:
             branches:
-              only: feature/Setting_up_CI_CD
+              only: develop
       - test:
           filters:
             branches:
-              only: feature/Setting_up_CI_CD
+              only: develop
       - deploy:
           filters:
             branches:
-              only: develop
+              only: feature/Setting_up_CI_CD
