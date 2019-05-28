@@ -5,8 +5,21 @@ jobs:
       - image: docker:stable
     steps:
       - checkout
+      - setup_remote_docker:
+          docker_layer_caching: true
       - run:
-          command: docker info
+          name: Install Docker client
+          command: |
+            set -x
+            VER="17.03.0-ce"
+            curl -L -o /tmp/docker-$VER.tgz https://download.docker.com/linux/static/stable/x86_64/docker-$VER.tgz
+            tar -xz -C /tmp -f /tmp/docker-$VER.tgz
+            mv /tmp/docker/* /usr/bin
+      - run: |
+          TAG=0.1.$CIRCLE_BUILD_NUM
+          docker build -t   maksim1990/laravelBaseApi/dev:$TAG -f ./docker/php/Dockerfile .     
+          docker login -u $DOCKER_USER -p $DOCKER_PASS
+          docker push maksim1990/laravelBaseApi/dev:$TAG
   test:
     docker:
       - image: circleci/php:7.3-stretch-node-browsers
@@ -55,11 +68,11 @@ workflows:
       - build:
           filters:
             branches:
-              only: develop
+              only: feature/Setting_up_CI_CD
       - test:
           filters:
             branches:
-              only: feature/Setting_up_CI_CD
+              only: develop
       - deploy:
           filters:
             branches:
