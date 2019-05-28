@@ -86,14 +86,20 @@ workflows:
       - build:
           filters:
             branches:
-              only: feature/Setting_up_CI_CD
+              only:
+                - develop
+                - master
       - test:
           filters:
             branches:
-              only: develop
+              only:
+                - develop
+                - master
       - deploy:
           requires:
             - build
           filters:
             branches:
-              only: feature/Setting_up_CI_CD
+              only:
+                - develop
+                - master
