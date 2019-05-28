@@ -19,9 +19,9 @@ jobs:
             sudo mv /tmp/docker/* /usr/bin
       - run: |
           TAG=0.1.$CIRCLE_BUILD_NUM
-          docker build -t   $DOCKER_IMAGE_NAME:$TAG -f ./docker/php/Dockerfile .     
+          docker build -t   $DOCKER_IMAGE_NAME:latest -f ./docker/php/Dockerfile .     
           docker login -u $DOCKER_USER -p $DOCKER_PASS
-          docker push $DOCKER_IMAGE_NAME:$TAG
+          docker push $DOCKER_IMAGE_NAME:latest
   test:
     docker:
       - image: circleci/php:7.3-stretch-node-browsers
@@ -84,7 +84,7 @@ workflows:
       - build:
           filters:
             branches:
-              only: develop
+              only: feature/Setting_up_CI_CD
       - test:
           filters:
             branches:
