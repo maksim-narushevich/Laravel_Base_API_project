@@ -10,9 +10,6 @@ jobs:
   test:
     docker:
       - image: circleci/php:7.3-stretch-node-browsers
-        environment:
-          DB_HOST: 127.0.0.1
-          DB_USERNAME: docker
       - image: circleci/mysql:5.7.26
         environment:
           MYSQL_DATABASE: laravel_api_db_test
