@@ -3,7 +3,7 @@ jobs:
   build:
     docker:
       - image: circleci/php:7.3-stretch-node-browsers
-      environment:
+        environment:
        DOCKER_IMAGE_NAME: maksim1990/laravel_base_api
     steps:
       - checkout
