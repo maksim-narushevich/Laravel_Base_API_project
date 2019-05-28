@@ -1,0 +1,105 @@
+version: 2
+jobs:
+  build:
+    docker:
+      - image: circleci/php:7.3-stretch-node-browsers
+        environment:
+          DOCKER_IMAGE_NAME: maksim1990/laravel_base_api
+    steps:
+      - checkout
+      - setup_remote_docker:
+          docker_layer_caching: true
+      - run:
+          name: Install Docker client
+          command: |
+            set -x
+            VER="18.06.0-ce"
+            curl -L -o /tmp/docker-$VER.tgz https://download.docker.com/linux/static/stable/x86_64/docker-$VER.tgz
+            sudo tar -xz -C /tmp -f /tmp/docker-$VER.tgz
+            sudo mv /tmp/docker/* /usr/bin
+      - run: |
+          TAG=0.1.$CIRCLE_BUILD_NUM
+          docker build -t   $DOCKER_IMAGE_NAME:latest -f ./docker/php/Dockerfile .     
+          docker login -u $DOCKER_USER -p $DOCKER_PASS
+          docker push $DOCKER_IMAGE_NAME:latest
+  test:
+    docker:
+      - image: circleci/php:7.3-stretch-node-browsers
+        environment:
+          DB_HOST: 127.0.0.1
+          DB_USERNAME: docker
+      - image: circleci/mysql:5.7.26
+        environment:
+          MYSQL_DATABASE: laravel_api_db_test
+          MYSQL_USER: docker
+          MYSQL_PASSWORD: laraapi
+    steps:
+      - checkout
+      - run: sudo docker-php-ext-install -j$(nproc) pdo_mysql zip mysqli
+      - run: sudo composer self-update
+      - run: sudo composer install -n --prefer-dist --ignore-platform-reqs
+      - save_cache:
+          key: composer-v1-{{ checksum "composer.lock" }}
+          paths:
+            - vendor
+      - run: cp behat.dist.remote behat.yml
+      - run: cp .env.behat.circleci .env
+      - run: php artisan key:generate
+      - run: php artisan migrate
+      - run: php artisan passport:install
+      - run:
+          name: Run web server
+          command: php artisan serve --port=8087
+          background: true
+      - run: vendor/bin/behat --tags @api_circleci
+  deploy:
+    machine:
+      enabled: true
+    working_directory: ~/laravel_base_api
+    steps:
+      - add_ssh_keys:
+          fingerprints:
+            - "0c:33:a8:8c:40:06:fa:ae:13:c8:63:a6:e7:52:a1:b0"
+      - checkout
+      - run: sed -e "s/\${APP_HTTP_PORT}/${DEV_HTTP_PORT}/g; s/\${APP_HTTPS_PORT}/${DEV_HTTPS_PORT}/g; s/\${APP_REDIS_PORT}/${DEV_REDIS_PORT}/g; s/\${APP_MYSQL_PORT}/${DEV_MYSQL_PORT}/g; s/\${APP_MAIL_PORT}/${DEV_MAIL_PORT}/g;"  docker-compose.dev.tpl.yml > docker-compose.yml
+      - run: scp -r ./docker-compose.yml $SSH_USER_VPS@$SSH_HOST_VPS:$PROJECT_DIR
+      - run: scp -r ./docker $SSH_USER_VPS@$SSH_HOST_VPS:$PROJECT_DIR
+      - run: ssh $SSH_USER_VPS@$SSH_HOST_VPS "cd $PROJECT_DIR && docker login -u $DOCKER_USER -p $DOCKER_PASS"
+      - run: ssh $SSH_USER_VPS@$SSH_HOST_VPS "cd $PROJECT_DIR && docker-compose pull"
+      - run: ssh $SSH_USER_VPS@$SSH_HOST_VPS "cd $PROJECT_DIR && docker-compose down"
+      - run: ssh $SSH_USER_VPS@$SSH_HOST_VPS "cd $PROJECT_DIR && docker volume rm laravelbaseapi_data-volume"
+      - run: ssh $SSH_USER_VPS@$SSH_HOST_VPS "cd $PROJECT_DIR && docker-compose up -d --no-deps --force-recreate"
+      - run: ssh $SSH_USER_VPS@$SSH_HOST_VPS "cd $PROJECT_DIR && docker exec laravel_api composer install"
+      - run: ssh $SSH_USER_VPS@$SSH_HOST_VPS "cd $PROJECT_DIR && docker exec laravel_api cp .env.dist .env"
+      - run: ssh $SSH_USER_VPS@$SSH_HOST_VPS "cd $PROJECT_DIR && docker exec laravel_api php artisan key:generate"
+      - run: ssh $SSH_USER_VPS@$SSH_HOST_VPS "cd $PROJECT_DIR && docker exec laravel_api php artisan migrate"
+      - run: ssh $SSH_USER_VPS@$SSH_HOST_VPS "cd $PROJECT_DIR && docker exec laravel_api php artisan passport:install"
+      - run: ssh $SSH_USER_VPS@$SSH_HOST_VPS "cd $PROJECT_DIR && docker exec laravel_api chmod +x ./services/docker/set_storage_read_write_permissions.sh"
+      - run: ssh $SSH_USER_VPS@$SSH_HOST_VPS "cd $PROJECT_DIR && docker exec laravel_api ./services/docker/set_storage_read_write_permissions.sh"
+      - run: ssh $SSH_USER_VPS@$SSH_HOST_VPS "cd $PROJECT_DIR && docker image prune -a -f"
+
+
+workflows:
+  version: 2
+  build-test-and-deploy:
+    jobs:
+      - build:
+          filters:
+            branches:
+              only:
+                - develop
+                - master
+      - test:
+          filters:
+            branches:
+              only:
+                - develop
+                - master
+      - deploy:
+          requires:
+            - build
+          filters:
+            branches:
+              only:
+                - develop
+                - master
