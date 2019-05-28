@@ -82,14 +82,14 @@ workflows:
       - build:
           filters:
             branches:
-              only: develop
+              only: feature/Setting_up_CI_CD
       - test:
           filters:
             branches:
               only: develop
       - deploy:
-          #requires:
-            #- build
+          requires:
+            - build
           filters:
             branches:
               only: feature/Setting_up_CI_CD
