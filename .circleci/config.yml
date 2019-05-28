@@ -65,8 +65,13 @@ jobs:
       - run: scp -r ./docker-compose.yml $SSH_USER_VPS@$SSH_HOST_VPS:$PROJECT_DIR
       - run: cp .env.dist .env && scp -r ./.env $SSH_USER_VPS@$SSH_HOST_VPS:$PROJECT_DIR
       - run: scp -r ./docker $SSH_USER_VPS@$SSH_HOST_VPS:$PROJECT_DIR
-      #- run: ssh $SSH_USER_VPS@$SSH_HOST_VPS "cd $PROJECT_DIR && docker-compose pull"
-      #- run: ssh $SSH_USER_VPS@$SSH_HOST_VPS "cd $PROJECT_DIR && docker-compose down"
+      - run: ssh $SSH_USER_VPS@$SSH_HOST_VPS "cd $PROJECT_DIR && docker-compose pull"
+      - run: ssh $SSH_USER_VPS@$SSH_HOST_VPS "cd $PROJECT_DIR && docker-compose down"
+      - run: ssh $SSH_USER_VPS@$SSH_HOST_VPS "cd $PROJECT_DIR && docker-compose up -d --no-deps --force-recreate"
+      - run: ssh $SSH_USER_VPS@$SSH_HOST_VPS "cd $PROJECT_DIR && docker exec laravel_api composer install"
+      - run: ssh $SSH_USER_VPS@$SSH_HOST_VPS "cd $PROJECT_DIR && docker exec laravel_api php artisan key:generate"
+      - run: ssh $SSH_USER_VPS@$SSH_HOST_VPS "cd $PROJECT_DIR && docker exec laravel_api php artisan artisan migrate"
+      - run: ssh $SSH_USER_VPS@$SSH_HOST_VPS "cd $PROJECT_DIR && docker exec laravel_api php artisan passport:install"
       #- run:
           #name: Deploy Over SSH to VPS server
           #command: |
