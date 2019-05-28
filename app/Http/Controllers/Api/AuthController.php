@@ -22,7 +22,7 @@ use Validator;
  * )
 
  *  @OA\Server(
- *      url="http://laramyapi.test/api/v1",
+ *      url="/api/v1",
  *      description="API documentation"
  * )
  * @OA\SecurityScheme(
@@ -51,6 +51,7 @@ class AuthController extends Controller
      *      tags={"User"},
      *     operationId="addUser",
      *     description="Create a new user.",
+     *     summary="Register new user and return JWT token",
      *     @OA\RequestBody(
      *         description="Create user",
      *          required=true,
@@ -87,6 +88,7 @@ class AuthController extends Controller
      *      tags={"User"},
      *     operationId="loginUser",
      *     description="Login user.",
+     *     summary="Login with existing user and obtain JWT token",
      *     @OA\RequestBody(
      *         description="Authorize user and get token",
      *          required=true,
@@ -118,7 +120,8 @@ class AuthController extends Controller
      *      description="Returns logged user data",
      *      @OA\Response(
      *          response=200,
-     *          description="successful operation"
+     *          description="successful operation",
+     *          @OA\JsonContent(ref="#/components/schemas/UserItem"),
      *       ),
      *      @OA\Response(response=400, description="Bad request"),
      *      @OA\Response(response=404, description="Resource Not Found"),

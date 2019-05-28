@@ -14,7 +14,7 @@
     },
     "servers": [
         {
-            "url": "http://laramyapi.test/api/v1",
+            "url": "/api/v1",
             "description": "API documentation"
         }
     ],
@@ -24,6 +24,7 @@
                 "tags": [
                     "User"
                 ],
+                "summary": "Register new user and return JWT token",
                 "description": "Create a new user.",
                 "operationId": "addUser",
                 "requestBody": {
@@ -52,6 +53,7 @@
                 "tags": [
                     "User"
                 ],
+                "summary": "Login with existing user and obtain JWT token",
                 "description": "Login user.",
                 "operationId": "loginUser",
                 "requestBody": {
@@ -85,7 +87,14 @@
                 "operationId": "App\\Http\\Controllers\\Api\\AuthController::getUser",
                 "responses": {
                     "200": {
-                        "description": "successful operation"
+                        "description": "successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UserItem"
+                                }
+                            }
+                        }
                     },
                     "400": {
                         "description": "Bad request"
@@ -163,7 +172,14 @@
                 "operationId": "getProducts",
                 "responses": {
                     "200": {
-                        "description": "successful operation"
+                        "description": "successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Product"
+                                }
+                            }
+                        }
                     },
                     "400": {
                         "description": "Bad request"
@@ -232,7 +248,14 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": "successful operation"
+                        "description": "successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Product"
+                                }
+                            }
+                        }
                     },
                     "400": {
                         "description": "Bad request"
@@ -397,6 +420,40 @@
                             },
                             "c_password": {
                                 "type": "string"
+                            }
+                        },
+                        "type": "object"
+                    }
+                ]
+            },
+            "UserItem": {
+                "type": "object",
+                "allOf": [
+                    {
+                        "$ref": "#/components/schemas/User"
+                    },
+                    {
+                        "properties": {
+                            "id": {
+                                "type": "integer"
+                            },
+                            "name": {
+                                "type": "string"
+                            },
+                            "email": {
+                                "type": "string"
+                            },
+                            "email_verified_at": {
+                                "type": "string",
+                                "format": "date"
+                            },
+                            "created_at": {
+                                "type": "string",
+                                "format": "date"
+                            },
+                            "updated_at": {
+                                "type": "string",
+                                "format": "date"
                             }
                         },
                         "type": "object"
