@@ -12,12 +12,12 @@ jobs:
       - image: circleci/php:7.3-stretch-node-browsers
         environment:
           DB_HOST: 127.0.0.1
-          DB_USERNAME: "${MYSQL_USER}"
+          DB_USERNAME: <%= ENV['MYSQL_USER'] %>
       - image: circleci/mysql:5.7.26
         environment:
-          MYSQL_DATABASE: "${MYSQL_DATABASE}"
-          MYSQL_USER: "${MYSQL_USER}"
-          MYSQL_PASSWORD: "${MYSQL_PASSWORD}"
+          MYSQL_DATABASE: <%= ENV['MYSQL_DATABASE'] %>
+          MYSQL_USER: <%= ENV['MYSQL_USER'] %>
+          MYSQL_PASSWORD: <%= ENV['MYSQL_PASSWORD'] %>
     steps:
       - checkout
       - run: sudo docker-php-ext-install -j$(nproc) pdo_mysql zip mysqli
