@@ -1,4 +1,4 @@
-version: '3.7'
+version: '3.5'
 services:
     lara_app:
         image: maksim1990/laravel_base_api:latest
