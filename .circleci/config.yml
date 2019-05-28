@@ -65,6 +65,7 @@ jobs:
       - run: scp -r ./docker-compose.yml $SSH_USER_VPS@$SSH_HOST_VPS:$PROJECT_DIR
       - run: cp .env.dist .env && scp -r ./.env $SSH_USER_VPS@$SSH_HOST_VPS:$PROJECT_DIR
       - run: scp -r ./docker $SSH_USER_VPS@$SSH_HOST_VPS:$PROJECT_DIR
+      - run: ssh $SSH_USER_VPS@$SSH_HOST_VPS "cd $PROJECT_DIR && docker login -u $DOCKER_USER -p $DOCKER_PASS"
       - run: ssh $SSH_USER_VPS@$SSH_HOST_VPS "cd $PROJECT_DIR && docker-compose pull"
       - run: ssh $SSH_USER_VPS@$SSH_HOST_VPS "cd $PROJECT_DIR && docker-compose down"
       - run: ssh $SSH_USER_VPS@$SSH_HOST_VPS "cd $PROJECT_DIR && docker-compose up -d --no-deps --force-recreate"
