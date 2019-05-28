@@ -2,7 +2,7 @@ version: 2
 jobs:
   build:
     docker:
-      - image: docker:stable
+      - image: circleci/php:7.3-stretch-node-browsers
     steps:
       - checkout
       - setup_remote_docker:
