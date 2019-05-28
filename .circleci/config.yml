@@ -55,11 +55,13 @@ jobs:
   deploy:
     machine:
       enabled: true
+    working_directory: ~/laravel_base_api
     steps:
       - add_ssh_keys:
           fingerprints:
             - "0c:33:a8:8c:40:06:fa:ae:13:c8:63:a6:e7:52:a1:b0"
       - run: ls -la
+      - run: pwd
       - run: sed -e "s/\${APP_HTTP_PORT}/${DEV_HTTP_PORT}/g; s/\${APP_HTTPS_PORT}/${DEV_HTTPS_PORT}/g; s/\${APP_REDIS_PORT}/${DEV_REDIS_PORT}/g; s/\${APP_MYSQL_PORT}/${DEV_MYSQL_PORT}/g; s/\${APP_MAIL_PORT}/${DEV_MAIL_PORT}/g;"  docker-compose.dev.tpl.yml > docker-compose.yml
       - run: scp -r ./docker-compose.yml $SSH_USER_VPS@$SSH_HOST_VPS:$PROJECT_DIR
       #- run:
