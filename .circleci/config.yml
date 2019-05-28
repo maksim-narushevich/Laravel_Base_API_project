@@ -18,7 +18,6 @@ jobs:
           MYSQL_DATABASE: laravel_api_db_test
           MYSQL_USER: docker
           MYSQL_PASSWORD: laraapi
-      - image: selenium/standalone-chrome:3
     steps:
       - checkout
       - run: sudo docker-php-ext-install -j$(nproc) pdo_mysql zip mysqli
