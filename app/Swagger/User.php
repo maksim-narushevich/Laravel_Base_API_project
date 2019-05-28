@@ -32,3 +32,21 @@ class User
  *   }
  * )
  */
+
+/**
+ *  @OA\Schema(
+ *   schema="UserItem",
+ *   type="object",
+ *   allOf={
+ *       @OA\Schema(ref="#/components/schemas/User"),
+ *       @OA\Schema(
+ *           @OA\Property(property="id", type="integer"),
+ *           @OA\Property(property="name",  type="string"),
+ *           @OA\Property(property="email",  type="string"),
+ *           @OA\Property(property="email_verified_at", type="string", format="date"),
+ *           @OA\Property(property="created_at", type="string", format="date"),
+ *           @OA\Property(property="updated_at", type="string", format="date"),
+ *       )
+ *   }
+ * )
+ */
