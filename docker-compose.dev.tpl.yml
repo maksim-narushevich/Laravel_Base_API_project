@@ -33,6 +33,8 @@ services:
         environment:
             MYSQL_ROOT_PASSWORD: laraapi
             MYSQL_DATABASE: laravel_api_db
+            MYSQL_USER: root
+            MYSQL_PASSWORD: laraapi
         ports:
             - "${APP_MYSQL_PORT}:3306"
         volumes:
