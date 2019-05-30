@@ -29,11 +29,11 @@ jobs:
       - image: circleci/php:7.3-stretch-node-browsers
         environment:
           DB_HOST: 127.0.0.1
-          DB_USERNAME: docker
+          DB_USERNAME: root
       - image: circleci/mysql:5.7.26
         environment:
           MYSQL_DATABASE: laravel_api_db_test
-          MYSQL_USER: docker
+          MYSQL_USER: root
           MYSQL_PASSWORD: laraapi
     steps:
       - checkout
@@ -117,6 +117,7 @@ workflows:
           filters:
             branches:
               only:
+                - feature/Update_Readme_docs
                 - develop
                 - master
       - deploy:
