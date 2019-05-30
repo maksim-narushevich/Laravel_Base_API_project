@@ -115,18 +115,15 @@ workflows:
             branches:
               only:
                 - develop
-                - master
       - test:
           filters:
             branches:
               only:
                 - develop
-                - master
       - deploy:
-          requires:
-            - build
+          #requires:
+            #- build
           filters:
             branches:
               only:
-                - develop
                 - master
