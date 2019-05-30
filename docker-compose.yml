@@ -31,11 +31,10 @@ services:
     mysql:
         image: mysql:5.7.21
         command: --init-file /data/app/init.sql
+        container_name: laraapi_db
         environment:
-            MYSQL_ROOT_PASSWORD: root
+            MYSQL_ROOT_PASSWORD: laraapi
             MYSQL_DATABASE: laravel_api_db
-            MYSQL_USER: docker
-            MYSQL_PASSWORD: laraapi
         ports:
             - "8787:3306"
         volumes:
