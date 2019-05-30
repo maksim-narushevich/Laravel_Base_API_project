@@ -12,7 +12,7 @@ use App\Exceptions\ProductNotBelongsToUser;
 use Illuminate\Support\Facades\Auth;
 use Symfony\Component\HttpFoundation\Response;
 
-class ProductController extends Controller
+class ProductController extends BaseApiController
 {
 
     public function __construct()

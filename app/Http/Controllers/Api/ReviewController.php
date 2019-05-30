@@ -12,7 +12,7 @@ use App\Models\Review;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
-class ReviewController extends Controller
+class ReviewController extends BaseApiController
 {
 
     public function __construct()

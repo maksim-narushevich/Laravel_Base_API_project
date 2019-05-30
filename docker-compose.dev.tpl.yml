@@ -31,9 +31,9 @@ services:
         image: mysql:5.7.21
         command: --init-file /data/app/init.sql
         environment:
-            MYSQL_ROOT_PASSWORD: root
+            MYSQL_ROOT_PASSWORD: laraapi
             MYSQL_DATABASE: laravel_api_db
-            MYSQL_USER: docker
+            MYSQL_USER: root
             MYSQL_PASSWORD: laraapi
         ports:
             - "${APP_MYSQL_PORT}:3306"
