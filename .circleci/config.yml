@@ -101,5 +101,6 @@ workflows:
           filters:
             branches:
               only:
+                - feature/Update_Readme_docs
                 - develop
                 - master
