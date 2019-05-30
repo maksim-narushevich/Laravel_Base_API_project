@@ -77,8 +77,6 @@ class AuthController extends BaseApiController
         $input = $request->all();
         $input['password'] = bcrypt($input['password']);
 
-        dd("KK");
-
         $user = User::create($input);
         $success['token'] =  $user->createToken('AppName')->accessToken;
         return response()->json(['success'=>$success], $this->successStatus);
