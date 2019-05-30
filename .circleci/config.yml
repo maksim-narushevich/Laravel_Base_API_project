@@ -29,16 +29,20 @@ jobs:
       - image: circleci/php:7.3-stretch-node-browsers
         environment:
           DB_HOST: 127.0.0.1
-          DB_USERNAME: root
       - image: circleci/mysql:5.7.26
         environment:
           MYSQL_ROOT_PASSWORD: laraapi
           MYSQL_DATABASE: laravel_api_db_test
     steps:
       - checkout
-      - run: sudo docker-php-ext-install -j$(nproc) pdo_mysql zip mysqli
-      - run: sudo composer self-update
-      - run: sudo composer install -n --prefer-dist --ignore-platform-reqs
+      - run:
+          name: Install required PHP extensions
+          command: sudo docker-php-ext-install -j$(nproc) pdo_mysql zip mysqli
+      - run:
+          name: Install Composer dependencies
+          command: |
+            sudo composer self-update
+            sudo composer install -n --prefer-dist --ignore-platform-reqs
       - save_cache:
           key: composer-v1-{{ checksum "composer.lock" }}
           paths:
