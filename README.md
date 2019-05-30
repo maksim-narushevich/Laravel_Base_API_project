@@ -26,6 +26,11 @@
     
         docker exec -it laravel_api  php artisan passport:install
 
+* *Change permission for 'storage' folder:*
+    
+        docker exec -it laravel_api  chmod +x ./services/docker/set_storage_read_write_permissions.sh
+        docker exec -it laravel_api  ./services/docker/set_storage_read_write_permissions.sh
+
 App is available on ``8187`` port
 --
     http://127.0.0.1:8187
