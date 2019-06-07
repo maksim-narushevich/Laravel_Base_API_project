@@ -52,6 +52,7 @@ jobs:
           command: |
              cp behat.dist.remote behat.yml
              cp .env.behat.circleci .env
+             cat .env
              php artisan key:generate
              php artisan migrate
              php artisan passport:install
@@ -119,7 +120,7 @@ workflows:
           filters:
             branches:
               only:
-                - develop
+                - feature/Add_Amazon_SNS_support
       - deploy:
           #requires:
             #- build

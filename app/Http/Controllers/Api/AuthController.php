@@ -82,15 +82,15 @@ class AuthController extends BaseApiController
 
         $user = User::create($input);
 
-        //-- Send email after successful registration
-        if(!is_null($user) && !empty($user->email)){
-            $emailData['content']="Welcome to this app ".$user->name."!";
-            $emailData['user']=$user;
-            Mailer::sendSuccessRegistrationMail($emailData);
-        }
+//        //-- Send email after successful registration
+//        if(!is_null($user) && !empty($user->email)){
+//            $emailData['content']="Welcome to this app ".$user->name."!";
+//            $emailData['user']=$user;
+//            Mailer::sendSuccessRegistrationMail($emailData);
+//        }
 
 
-        $success['token'] =  $user->createToken('AppName')->accessToken;
+        $success['token'] =  "ddd";
         return response()->json(['success'=>$success], $this->successStatus);
     }
 
