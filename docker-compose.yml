@@ -6,6 +6,8 @@ services:
             dockerfile: ./docker/php/Dockerfile
         container_name: laravel_api
         user: "${UID}"
+        networks:
+          - docker-shared-services
         volumes:
             - ./:/var/www
             - ./data/composer:/.composer
@@ -18,6 +20,8 @@ services:
         ports:
             - "8187:80"
             - "4433:443"
+        networks:
+          - docker-shared-services
         volumes:
             - ./docker/nginx/hosts:/etc/nginx/conf.d
             - ./:/var/www
@@ -26,12 +30,16 @@ services:
             - lara_app
     redis:
         image: redis:latest
+        networks:
+          - docker-shared-services
         ports:
           - "6380:6379"
     mysql:
         image: mysql:5.7.21
         command: --init-file /data/app/init.sql
         container_name: laraapi_db
+        networks:
+          - docker-shared-services
         environment:
             MYSQL_ROOT_PASSWORD: laraapi
             MYSQL_DATABASE: laravel_api_db
@@ -45,3 +53,7 @@ services:
         ports:
             - 25
             - 8127:80
+
+networks:
+  docker-shared-services:
+    external: true

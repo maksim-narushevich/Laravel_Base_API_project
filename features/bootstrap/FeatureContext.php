@@ -191,6 +191,7 @@ class FeatureContext extends ApiContext implements Context, SnippetAcceptingCont
     public function runDatabaseMigrations()
     {
         Artisan::call('migrate');
+        Artisan::call('config:clear');
     }
 
 
