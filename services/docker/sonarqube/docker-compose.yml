@@ -1,0 +1,13 @@
+version: '3.5'
+
+services:
+  sonarqube:
+    image: sonarqube
+    container_name: docker_shared_sonarqube
+    networks:
+      - docker-shared-services
+    ports:
+      - "9010:9000"
+networks:
+  docker-shared-services:
+    external: true
