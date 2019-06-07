@@ -18,3 +18,13 @@ Route::get('/', function () {
 Auth::routes();
 
 Route::get('/home', 'HomeController@index')->name('home');
+
+//AWS services routes
+Route::get('/sendSMS/{phone_number}', 'AWSController@sendSMS');
+Route::get('/aws/s3', 'AWSController@bucket');
+
+
+//Mail services routes
+Route::get('/email/send', 'MailController@send');
+
+

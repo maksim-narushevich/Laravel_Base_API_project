@@ -1,9 +1,12 @@
 <?php
 namespace App\Http\Controllers\Api;
+use App\Mail\RegistrationSuccessful;
+use App\Services\Mailer;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\User;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
 use Validator;
 
 
@@ -78,6 +81,15 @@ class AuthController extends BaseApiController
         $input['password'] = bcrypt($input['password']);
 
         $user = User::create($input);
+
+        //-- Send email after successful registration
+        if(!is_null($user) && !empty($user->email)){
+            $emailData['content']="Welcome to this app ".$user->name."!";
+            $emailData['user']=$user;
+            Mailer::sendSuccessRegistrationMail($emailData);
+        }
+
+
         $success['token'] =  $user->createToken('AppName')->accessToken;
         return response()->json(['success'=>$success], $this->successStatus);
     }
