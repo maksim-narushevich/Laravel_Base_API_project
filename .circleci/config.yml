@@ -98,7 +98,7 @@ jobs:
               ssh $SSH_USER_VPS@$SSH_HOST_VPS "cd $PROJECT_DIR && docker exec laravel_api cp .env.dist .env"
               ssh $SSH_USER_VPS@$SSH_HOST_VPS "cd $PROJECT_DIR && docker exec laravel_api php artisan key:generate"
               ssh $SSH_USER_VPS@$SSH_HOST_VPS "cd $PROJECT_DIR && docker exec laravel_api php artisan migrate"
-              ssh $SSH_USER_VPS@$SSH_HOST_VPS "cd $PROJECT_DIR && docker exec laravel_api php artisan passport:install"
+              ssh $SSH_USER_VPS@$SSH_HOST_VPS "cd $PROJECT_DIR && docker exec laravel_api php artisan passport:oauth:clients"
               ssh $SSH_USER_VPS@$SSH_HOST_VPS "cd $PROJECT_DIR && docker exec laravel_api chmod +x ./services/docker/set_storage_read_write_permissions.sh"
               ssh $SSH_USER_VPS@$SSH_HOST_VPS "cd $PROJECT_DIR && docker exec laravel_api ./services/docker/set_storage_read_write_permissions.sh"
       - run:
