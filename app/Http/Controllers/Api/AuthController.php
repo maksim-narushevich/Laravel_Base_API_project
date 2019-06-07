@@ -82,13 +82,14 @@ class AuthController extends BaseApiController
 
         $user = User::create($input);
 
+        //-- Get current environment in order prevent sending email in 'test' mode
+        $env = app()->environment();
         //-- Send email after successful registration
-        if(!is_null($user) && !empty($user->email)){
+        if($env!=='test' && !is_null($user) && !empty($user->email)){
             $emailData['content']="Welcome to this app ".$user->name."!";
             $emailData['user']=$user;
             Mailer::sendSuccessRegistrationMail($emailData);
         }
-
 
         $success['token'] =  $user->createToken('AppName')->accessToken;
         return response()->json(['success'=>$success], $this->successStatus);
