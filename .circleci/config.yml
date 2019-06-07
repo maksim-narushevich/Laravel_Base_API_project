@@ -119,7 +119,7 @@ workflows:
           filters:
             branches:
               only:
-                - feature/Add_Amazone_SNS_support
+                - develop
       - deploy:
           #requires:
             #- build
