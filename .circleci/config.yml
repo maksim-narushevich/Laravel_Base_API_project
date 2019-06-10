@@ -61,9 +61,7 @@ jobs:
     executor: php
     steps:
       - checkout
-      - composer-selfupdate
-      - install-composer
-      - save-composer-cache
+      - restore-composer-cache
       - run:
           name: Run PHPStan
           command: vendor/bin/phpstan analyse --ansi -l 1
@@ -163,6 +161,8 @@ workflows:
   build-test-and-deploy:
     jobs:
       - build:
+          requires:
+            - phpstan_analyze
           filters:
             branches:
               only:
@@ -171,17 +171,17 @@ workflows:
           filters:
             branches:
               only:
-                - develop
+                - feature/Add_PHPStan_support
       - phpstan_analyze:
-          #requires:
-            #- tests_behat
+          requires:
+            - tests_behat
           filters:
             branches:
               only:
                 - feature/Add_PHPStan_support
       - deploy:
-          #requires:
-            #- build
+          requires:
+            - build
           filters:
             branches:
               only:
