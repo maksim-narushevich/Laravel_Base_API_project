@@ -1,32 +1,62 @@
 version: 2
-jobs:
-  phpstan_analyze:
-    docker:
-      - image: circleci/php:7.3-stretch-node-browsers
+
+commands:
+  save-composer-cache:
     steps:
-      - checkout
-      - setup_remote_docker:
-          docker_layer_caching: true
+      - save_cache:
+          paths:
+            - ~/.composer/cache
+          key: composer-cache-{{ .Branch }}-{{ .BuildNum }}
+      - save_cache:
+          paths:
+            - ~/.composer/cache
+          key: composer-cache-{{ .Revision }}-{{ .BuildNum }}
+  install-composer:
+    steps:
       - run:
-          name: Install Docker client
+          name: Install composer dependencies
           command: |
-            set -x
-            VER="18.06.0-ce"
-            curl -L -o /tmp/docker-$VER.tgz https://download.docker.com/linux/static/stable/x86_64/docker-$VER.tgz
-            sudo tar -xz -C /tmp -f /tmp/docker-$VER.tgz
-            sudo mv /tmp/docker/* /usr/bin
-      - run:
-          name: Run PHPStan code analyzing
-          command: |
-            pwd
-            git branch
-            ls -la $(pwd)
-            docker run --rm -v $(pwd):/app phpstan/phpstan analyse -l 1
-  build:
+            composer install
+  save-phpstan-cache:
+    steps:
+      - save_cache:
+          paths:
+            - /tmp/phpstan/cache
+          key: phpstan-cache-{{ .Branch }}-{{ .BuildNum }}
+      - save_cache:
+          paths:
+            - /tmp/phpstan/cache
+          key: phpstan-cache-{{ .Revision }}-{{ .BuildNum }}
+
+executors:
+  php:
     docker:
       - image: circleci/php:7.3-stretch-node-browsers
         environment:
           DOCKER_IMAGE_NAME: maksim1990/laravel_base_api
+          DB_HOST: 127.0.0.1
+  php-and-mysql:
+    docker:
+      - image: circleci/php:7.3-stretch-node-browsers
+        environment:
+          DB_HOST: 127.0.0.1
+      - image: circleci/mysql:5.7.26
+        environment:
+          MYSQL_ROOT_PASSWORD: laraapi
+          MYSQL_DATABASE: laravel_api_db_test
+jobs:
+  phpstan_analyze:
+    executor: php
+    steps:
+      - checkout
+      - install-composer
+      - save-composer-cache
+      - run:
+          name: Run PHPStan
+          command: vendor/bin/phpstan analyse --ansi
+      - save-phpstan-cache
+  build:
+    executor: php
     steps:
       - checkout
       - setup_remote_docker:
@@ -47,14 +77,7 @@ jobs:
             docker login -u $DOCKER_USER -p $DOCKER_PASS
             docker push $DOCKER_IMAGE_NAME:$TAG
   tests_behat:
-    docker:
-      - image: circleci/php:7.3-stretch-node-browsers
-        environment:
-          DB_HOST: 127.0.0.1
-      - image: circleci/mysql:5.7.26
-        environment:
-          MYSQL_ROOT_PASSWORD: laraapi
-          MYSQL_DATABASE: laravel_api_db_test
+    executor: php-and-mysql
     steps:
       - checkout
       - run:
