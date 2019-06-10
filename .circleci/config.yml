@@ -3,7 +3,6 @@ jobs:
   phpstan_analyze:
     docker:
       - image: circleci/php:7.3-stretch-node-browsers
-    working_directory: ~/laravel_base_api
     steps:
       - checkout
       - setup_remote_docker:
