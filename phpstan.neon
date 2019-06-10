@@ -1,0 +1,7 @@
+parameters:
+    autoload_files:
+    		- vendor/autoload.php
+    paths:
+        - app
+    excludes_analyse:
+    	- routes

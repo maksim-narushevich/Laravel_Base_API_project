@@ -1,5 +1,13 @@
 version: 2
 jobs:
+  phpstan_analyze:
+    docker:
+      - image: circleci/php:7.3-stretch-node-browsers
+    steps:
+      - checkout
+      - run:
+          name: Run PHPStan code analyzing
+          command: docker run --rm -v /$(pwd):/app phpstan/phpstan analyse /app -l 0
   build:
     docker:
       - image: circleci/php:7.3-stretch-node-browsers
@@ -24,7 +32,7 @@ jobs:
             docker build -t   $DOCKER_IMAGE_NAME:$TAG -f ./docker/php/Dockerfile .
             docker login -u $DOCKER_USER -p $DOCKER_PASS
             docker push $DOCKER_IMAGE_NAME:$TAG
-  test:
+  tests_behat:
     docker:
       - image: circleci/php:7.3-stretch-node-browsers
         environment:
@@ -115,11 +123,18 @@ workflows:
             branches:
               only:
                 - develop
-      - test:
+      - tests_behat:
           filters:
             branches:
               only:
-                - develop
+                - feature/Add_PHPStan_support
+      - phpstan_analyze:
+          requires:
+            - tests_behat
+          filters:
+            branches:
+              only:
+                - feature/Add_PHPStan_support
       - deploy:
           #requires:
             #- build
