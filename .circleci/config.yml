@@ -11,12 +11,24 @@ commands:
           paths:
             - ~/.composer/cache
           key: composer-cache-{{ .Revision }}-{{ .BuildNum }}
+  restore-composer-cache:
+    steps:
+      - restore_cache:
+          keys:
+            - composer-cache-{{ .Revision }}
+            - composer-cache-{{ .Branch }}
+            - composer-cache
   install-composer:
     steps:
       - run:
           name: Install composer dependencies
           command: |
             composer install
+  composer-selfupdate:
+    steps:
+      - run:
+          name: Composer self updating
+          command: sudo composer self-update
   save-phpstan-cache:
     steps:
       - save_cache:
@@ -49,11 +61,12 @@ jobs:
     executor: php
     steps:
       - checkout
+      - composer-selfupdate
       - install-composer
       - save-composer-cache
       - run:
           name: Run PHPStan
-          command: vendor/bin/phpstan analyse --ansi
+          command: vendor/bin/phpstan analyse --ansi -l 1
       - save-phpstan-cache
   build:
     executor: php
@@ -83,15 +96,9 @@ jobs:
       - run:
           name: Install required PHP extensions
           command: sudo docker-php-ext-install -j$(nproc) pdo_mysql zip mysqli
-      - run:
-          name: Install Composer dependencies
-          command: |
-            sudo composer self-update
-            sudo composer install -n --prefer-dist --ignore-platform-reqs
-      - save_cache:
-          key: composer-v1-{{ checksum "composer.lock" }}
-          paths:
-            - vendor
+      - composer-selfupdate
+      - install-composer
+      - save-composer-cache
       - run:
           name: Set up Laravel environment for Behat tests
           command: |
@@ -106,7 +113,7 @@ jobs:
           background: true
       - run:
           name: Start Behat tests
-          command: vendor/bin/behat --tags @api_circleci -l 1
+          command: vendor/bin/behat --tags @api_circleci
   deploy:
     machine:
       enabled: true
