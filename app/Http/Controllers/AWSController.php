@@ -3,8 +3,8 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use AWS;
 use Illuminate\Support\Facades\Storage;
+use Aws\Laravel\AwsFacade as AWS;
 
 class AWSController extends Controller
 {
