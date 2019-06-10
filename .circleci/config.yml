@@ -21,7 +21,7 @@ jobs:
           command: |
             pwd
             ls -la
-            docker run --rm -v /$(pwd):/src phpstan/phpstan analyse /src/app -l 1
+            docker run --rm -v /$(pwd):/app phpstan/phpstan analyse -l 1
   build:
     docker:
       - image: circleci/php:7.3-stretch-node-browsers
