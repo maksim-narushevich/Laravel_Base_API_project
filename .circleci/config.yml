@@ -166,14 +166,14 @@ workflows:
           filters:
             branches:
               only:
-                - feature/Add_PHPStan_support
+                - develop
       - phpstan_analyze:
           requires:
             - tests_behat
           filters:
             branches:
               only:
-                - feature/Add_PHPStan_support
+                - develop
       - deploy:
           requires:
             - build
