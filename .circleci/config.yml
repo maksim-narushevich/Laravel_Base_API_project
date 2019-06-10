@@ -59,7 +59,7 @@ jobs:
       - restore-composer-cache
       - run:
           name: Run PHPStan
-          command: vendor/bin/phpstan analyse --ansi -l 1
+          command: vendor/bin/phpstan analyse --ansi
       - save-phpstan-cache
   build:
     executor: php
