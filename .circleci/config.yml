@@ -4,20 +4,15 @@ commands:
   save-composer-cache:
     steps:
       - save_cache:
+          key: composer-v1-{{ checksum "composer.lock" }}
           paths:
-            - ~/.composer/cache
-          key: composer-cache-{{ .Branch }}-{{ .BuildNum }}
-      - save_cache:
-          paths:
-            - ~/.composer/cache
-          key: composer-cache-{{ .Revision }}-{{ .BuildNum }}
+            - vendor
   restore-composer-cache:
     steps:
       - restore_cache:
           keys:
-            - composer-cache-{{ .Revision }}
-            - composer-cache-{{ .Branch }}
-            - composer-cache
+            - composer-v1-{{ checksum "composer.lock" }}
+            - composer-v1-
   install-composer:
     steps:
       - run:
