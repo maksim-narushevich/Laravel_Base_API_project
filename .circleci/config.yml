@@ -17,7 +17,7 @@ jobs:
             sudo mv /tmp/docker/* /usr/bin
       - run:
           name: Run PHPStan code analyzing
-          command: docker run --rm -v /$(pwd):/app phpstan/phpstan analyse /app -l 0
+          command: docker run --rm -v /$(pwd):/app phpstan/phpstan analyse /app -l 1
   build:
     docker:
       - image: circleci/php:7.3-stretch-node-browsers
