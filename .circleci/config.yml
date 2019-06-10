@@ -3,6 +3,7 @@ jobs:
   phpstan_analyze:
     docker:
       - image: circleci/php:7.3-stretch-node-browsers
+    working_directory: ~/laravel_base_api
     steps:
       - checkout
       - setup_remote_docker:
@@ -17,7 +18,10 @@ jobs:
             sudo mv /tmp/docker/* /usr/bin
       - run:
           name: Run PHPStan code analyzing
-          command: docker run --rm -v /$(pwd):/src phpstan/phpstan analyse /src/app -l 1
+          command: |
+            pwd
+            ls -la
+            docker run --rm -v /$(pwd):/src phpstan/phpstan analyse /src/app -l 1
   build:
     docker:
       - image: circleci/php:7.3-stretch-node-browsers
@@ -137,10 +141,10 @@ workflows:
           filters:
             branches:
               only:
-                - feature/Add_PHPStan_support
+                - develop
       - phpstan_analyze:
-          requires:
-            - tests_behat
+          #requires:
+            #- tests_behat
           filters:
             branches:
               only:
