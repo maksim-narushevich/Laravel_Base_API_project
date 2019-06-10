@@ -106,7 +106,7 @@ jobs:
           background: true
       - run:
           name: Start Behat tests
-          command: vendor/bin/behat --tags @api_circleci
+          command: vendor/bin/behat --tags @api_circleci -l 1
   deploy:
     machine:
       enabled: true
