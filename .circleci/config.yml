@@ -20,6 +20,7 @@ jobs:
           name: Run PHPStan code analyzing
           command: |
             pwd
+            git branch
             ls -la
             docker run --rm -v /$(pwd):/app phpstan/phpstan analyse -l 1
   build:
