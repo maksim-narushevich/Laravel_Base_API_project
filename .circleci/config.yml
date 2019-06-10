@@ -1,10 +1,68 @@
-version: 2
-jobs:
-  build:
+version: 2.1
+
+commands:
+  save-composer-cache:
+    steps:
+      - save_cache:
+          key: composer-v1-{{ checksum "composer.lock" }}
+          paths:
+            - vendor
+  restore-composer-cache:
+    steps:
+      - restore_cache:
+          keys:
+            - composer-v1-{{ checksum "composer.lock" }}
+            - composer-v1-
+  install-composer:
+    steps:
+      - run:
+          name: Install composer dependencies
+          command: |
+            composer install
+  composer-selfupdate:
+    steps:
+      - run:
+          name: Composer self updating
+          command: sudo composer self-update
+  save-phpstan-cache:
+    steps:
+      - save_cache:
+          paths:
+            - /tmp/phpstan/cache
+          key: phpstan-cache-{{ .Branch }}-{{ .BuildNum }}
+      - save_cache:
+          paths:
+            - /tmp/phpstan/cache
+          key: phpstan-cache-{{ .Revision }}-{{ .BuildNum }}
+
+executors:
+  php:
     docker:
       - image: circleci/php:7.3-stretch-node-browsers
         environment:
           DOCKER_IMAGE_NAME: maksim1990/laravel_base_api
+          DB_HOST: 127.0.0.1
+  php-and-mysql:
+    docker:
+      - image: circleci/php:7.3-stretch-node-browsers
+        environment:
+          DB_HOST: 127.0.0.1
+      - image: circleci/mysql:5.7.26
+        environment:
+          MYSQL_ROOT_PASSWORD: laraapi
+          MYSQL_DATABASE: laravel_api_db_test
+jobs:
+  phpstan_analyze:
+    executor: php
+    steps:
+      - checkout
+      - restore-composer-cache
+      - run:
+          name: Run PHPStan
+          command: vendor/bin/phpstan analyse --ansi
+      - save-phpstan-cache
+  build:
+    executor: php
     steps:
       - checkout
       - setup_remote_docker:
@@ -24,29 +82,16 @@ jobs:
             docker build -t   $DOCKER_IMAGE_NAME:$TAG -f ./docker/php/Dockerfile .
             docker login -u $DOCKER_USER -p $DOCKER_PASS
             docker push $DOCKER_IMAGE_NAME:$TAG
-  test:
-    docker:
-      - image: circleci/php:7.3-stretch-node-browsers
-        environment:
-          DB_HOST: 127.0.0.1
-      - image: circleci/mysql:5.7.26
-        environment:
-          MYSQL_ROOT_PASSWORD: laraapi
-          MYSQL_DATABASE: laravel_api_db_test
+  tests_behat:
+    executor: php-and-mysql
     steps:
       - checkout
       - run:
           name: Install required PHP extensions
           command: sudo docker-php-ext-install -j$(nproc) pdo_mysql zip mysqli
-      - run:
-          name: Install Composer dependencies
-          command: |
-            sudo composer self-update
-            sudo composer install -n --prefer-dist --ignore-platform-reqs
-      - save_cache:
-          key: composer-v1-{{ checksum "composer.lock" }}
-          paths:
-            - vendor
+      - composer-selfupdate
+      - install-composer
+      - save-composer-cache
       - run:
           name: Set up Laravel environment for Behat tests
           command: |
@@ -111,18 +156,27 @@ workflows:
   build-test-and-deploy:
     jobs:
       - build:
+          requires:
+            - phpstan_analyze
           filters:
             branches:
               only:
                 - develop
-      - test:
+      - tests_behat:
+          filters:
+            branches:
+              only:
+                - develop
+      - phpstan_analyze:
+          requires:
+            - tests_behat
           filters:
             branches:
               only:
                 - develop
       - deploy:
-          #requires:
-            #- build
+          requires:
+            - build
           filters:
             branches:
               only:
