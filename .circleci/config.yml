@@ -112,7 +112,7 @@ jobs:
       enabled: true
     environment:
       # If 'yes' than use shared MYSQL service
-      DEPLOY_WITH_SHARED_MYSQL: "no"
+      DEPLOY_WITH_SHARED_MYSQL: "yes"
     working_directory: ~/laravel_base_api
     steps:
       - add_ssh_keys:
