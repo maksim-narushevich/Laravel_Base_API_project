@@ -39,12 +39,8 @@ class AddLaravelPassportTokens extends Command
      */
     public function handle()
     {
-        $count=DB::select('SELECT COUNT(*) as count FROM oauth_clients');
-        if($count[0]->count===0){
-            Artisan::call('passport:install');
-            $this->info("Added Laravel Passport Oauth tokens!");
-        }else{
-            $this->info("Laravel Passport Oauth tokens already installed!");
-        }
+        DB::statement('TRUNCATE TABLE oauth_clients;');
+        Artisan::call('passport:install');
+        $this->info("Regenerated Laravel Passport Oauth tokens!");
     }
 }
