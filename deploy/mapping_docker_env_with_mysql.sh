@@ -10,6 +10,7 @@ sed -e "s/\${APP_HTTP_PORT}/${DEV_HTTP_PORT}/g;
 
 sed -e "s/\${APP_MYSQL_PASSWORD}/${DEV_MYSQL_PASSWORD}/g;
          s/\${APP_MYSQL_DATABASE}/${DEV_MYSQL_DATABASE}/g;
+         s/\${APP_MYSQL_HOST}/mysql_api/g;
          s/\${APP_MYSQL_PORT}/3306/g;
          s/\${APP_AWS_ACCESS_KEY_ID}/${DEV_AWS_ACCESS_KEY_ID}/g;
          s/\${APP_AWS_SECRET_ACCESS_KEY}/${DEV_AWS_SECRET_ACCESS_KEY}/g;
