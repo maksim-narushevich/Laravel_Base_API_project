@@ -7,7 +7,7 @@ use App\Http\Controllers\Controller;
 use App\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
-use Validator;
+use Illuminate\Support\Facades\Validator;
 
 
 /**
