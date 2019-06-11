@@ -121,7 +121,7 @@ jobs:
       - checkout
       - run:
           name: Perform ports mapping
-          command:|
+          command: |
               find ./deploy/ -type f -iname "*.sh" -exec chmod +x {} \;
               ./deploy/mapping_environment_credentials_and_ports.sh $DEPLOY_WITH_SHARED_MYSQL
       - run:
