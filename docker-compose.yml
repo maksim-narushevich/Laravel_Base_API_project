@@ -41,8 +41,8 @@ services:
         networks:
           - docker-shared-services
         environment:
-            MYSQL_ROOT_PASSWORD: laraapi
-            MYSQL_DATABASE: laravel_api_db
+            MYSQL_ROOT_PASSWORD:  ${DB_PASSWORD}
+            MYSQL_DATABASE: ${DB_DATABASE}
         ports:
             - "8787:3306"
         volumes:

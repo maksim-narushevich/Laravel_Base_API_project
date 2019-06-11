@@ -1,0 +1,49 @@
+version: '3.5'
+services:
+  lara_app_api:
+    image: maksim1990/laravel_base_api:latest
+    container_name: laravel_api
+    networks:
+      - docker-shared-services
+    user: "${UID}"
+    volumes:
+      - data-volume:/var/www
+      - ./data/composer:/.composer
+      - ./logs/laravel:/var/www/var/logs:cached
+      - hosts-volume:/etc/nginx/conf.d
+    depends_on:
+      - redis_api
+  nginx_api:
+    image: nginx:latest
+    networks:
+      - docker-shared-services
+    ports:
+      - "${APP_HTTP_PORT}:80"
+      - "${APP_HTTPS_PORT}:443"
+    volumes:
+      - hosts-volume:/etc/nginx/conf.d
+      - data-volume:/var/www
+      - ./logs/nginx/:/var/log/nginx:cached
+    depends_on:
+      - lara_app_api
+  redis_api:
+    image: redis:latest
+    networks:
+      - docker-shared-services
+    ports:
+      - "${APP_REDIS_PORT}:6379"
+  mail_api:
+    image: djfarrelly/maildev
+    networks:
+      - docker-shared-services
+    ports:
+      - 25
+      - ${APP_MAIL_PORT}:80
+
+networks:
+  docker-shared-services:
+    external: true
+
+volumes:
+  data-volume:
+  hosts-volume:

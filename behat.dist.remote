@@ -16,7 +16,7 @@ default:
     Laracasts\Behat:
     Imbo\BehatApiExtension:
       apiClient:
-        base_uri: http://127.0.0.1:8087
+        base_uri: http://127.0.0.1:8187
         #timeout: 5.0
         verify: false
     Behat\MinkExtension:
