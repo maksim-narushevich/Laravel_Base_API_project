@@ -3,7 +3,7 @@
 
 pwd
 
-ls -la
+ls -la ./deploy
 
 if [ $1 == "yes" ]; then
     echo "Start App environment WITH Shared Mysql service";
