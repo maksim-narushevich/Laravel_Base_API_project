@@ -111,7 +111,7 @@ jobs:
     machine:
       enabled: true
     environment:
-      # If 'yes' than use shared MYSQL service
+      # If 'yes' than use shared MYSQL service 
       DEPLOY_WITH_SHARED_MYSQL: "no"
     working_directory: ~/laravel_base_api
     steps:
