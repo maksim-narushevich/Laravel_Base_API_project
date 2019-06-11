@@ -7,6 +7,7 @@ services:
       - docker-shared-services
     user: "${UID}"
     volumes:
+      - ./deploy:/var/www/deploy
       - data-volume:/var/www
       - ./data/composer:/.composer
       - ./logs/laravel:/var/www/var/logs:cached
