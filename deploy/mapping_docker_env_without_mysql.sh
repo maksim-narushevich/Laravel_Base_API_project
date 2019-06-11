@@ -1,9 +1,5 @@
 #!/usr/bin/env bash
 
-pwd
-
-ls -la
-
 sed -e "s/\${APP_HTTP_PORT}/${DEV_HTTP_PORT}/g;
         s/\${APP_HTTPS_PORT}/${DEV_HTTPS_PORT}/g;
         s/\${APP_REDIS_PORT}/${DEV_REDIS_PORT}/g;
