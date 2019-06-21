@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Mail\RegistrationSuccessful;
 use App\Services\Mailer;
+use App\Services\Pagination\Paginator;
 use App\Services\TokenGenerator;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
@@ -194,9 +195,36 @@ class AuthController extends BaseApiController
      *     }
      * )
      */
-    public function getUser()
+    public function getUser(Request $request, Paginator $paginator)
     {
-        return response()->json(['data' => Auth::user()], Response::HTTP_OK);
+        return $this->view(Auth::user(),Response::HTTP_OK);
+    }
+
+
+    /**
+     * @OA\Get(
+     *      path="/users",
+     *      tags={"User"},
+     *      summary="All users",
+     *      description="Returns liss of all users",
+     *      @OA\Response(
+     *          response=200,
+     *          description="successful operation",
+     *          @OA\JsonContent(ref="#/components/schemas/UserItem"),
+     *       ),
+     *      @OA\Response(response=400, description="Bad request"),
+     *      @OA\Response(response=404, description="Resource Not Found"),
+     *     security={
+     *         {"bearerAuth": {}}
+     *     }
+     * )
+     * @param Request $request
+     * @param Paginator $paginator
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function getUserList(Request $request, Paginator $paginator)
+    {
+        return $this->view($paginator->paginate(User::all()->toArray(),$request),Response::HTTP_OK);
     }
 
 

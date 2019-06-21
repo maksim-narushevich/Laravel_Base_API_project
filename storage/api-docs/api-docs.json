@@ -150,6 +150,39 @@
                 ]
             }
         },
+        "/users": {
+            "get": {
+                "tags": [
+                    "User"
+                ],
+                "summary": "All users",
+                "description": "Returns liss of all users",
+                "operationId": "App\\Http\\Controllers\\Api\\AuthController::getUserList",
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UserItem"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request"
+                    },
+                    "404": {
+                        "description": "Resource Not Found"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
         "/user/delete/{id}": {
             "delete": {
                 "tags": [

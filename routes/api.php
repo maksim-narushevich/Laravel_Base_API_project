@@ -20,6 +20,7 @@ Route::prefix('v1')->group(function(){
 
     Route::group(['middleware' => 'auth:api'], function(){
         Route::get('auth-user', 'Api\AuthController@getUser');
+        Route::get('users', 'Api\AuthController@getUserList');
         Route::delete('auth-user/delete', 'Api\AuthController@deleteAuthUser');
         Route::delete('user/delete/{user}', 'Api\AuthController@deleteUser');
     });

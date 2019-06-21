@@ -24,7 +24,7 @@ class ProductController extends BaseApiController
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\Resources\Json\AnonymousResourceCollection
+     * @param Request $request
      *
      * @OA\Get(
      *      path="/products",
@@ -43,10 +43,16 @@ class ProductController extends BaseApiController
      *         {"bearerAuth": {}}
      *     }
      * )
+     * @return \Illuminate\Http\JsonResponse|\Illuminate\Http\Resources\Json\AnonymousResourceCollection
      */
-    public function index()
+    public function index(Request $request)
     {
-        return ProductCollection::collection(Product::paginate(20));
+        $productsPg=$this->getSortedCollectionData($request,'product');
+        if($productsPg->currentPage()<=$productsPg->lastPage()){
+            return ProductCollection::collection($productsPg);
+        }else{
+            return $this->errorView('page_not_found', Response::HTTP_NOT_FOUND);
+        }
     }
 
     /**
@@ -210,7 +216,7 @@ class ProductController extends BaseApiController
      * Remove the specified resource from storage.
      *
      * @param $id
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Contracts\Routing\ResponseFactory|\Illuminate\Http\JsonResponse|\Illuminate\Http\Response
      * @throws ProductNotBelongsToUser
      * @OA\Delete(path="/products/{product}",
      *   tags={"Product"},
@@ -241,8 +247,7 @@ class ProductController extends BaseApiController
             $product->delete();
             return response(['data'=>"Product with id ".$id." was successfully deleted"],Response::HTTP_OK);
         }else{
-            return response()
-                ->json(['error' => 'Product with ID '.$id." was not found"]);
+            return $this->errorView('page_not_found', Response::HTTP_NOT_FOUND);
         }
 
     }

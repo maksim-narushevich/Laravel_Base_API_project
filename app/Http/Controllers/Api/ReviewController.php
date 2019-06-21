@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Exceptions\ReviewNotBelongsToProduct;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\ReviewRequest;
+use App\Http\Resources\Product\ProductCollection;
 use App\Http\Resources\Review\ReviewCollection;
 use App\Http\Resources\Review\ReviewResource;
 use App\Models\Product;
@@ -25,12 +26,17 @@ class ReviewController extends BaseApiController
      * Display a listing of the resource.
      *
      * @param \App\Models\Product $product
-     *
-     * @return \Illuminate\Http\Resources\Json\AnonymousResourceCollection
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse|\Illuminate\Http\Resources\Json\AnonymousResourceCollection
      */
-    public function index(Product $product)
+    public function index(Product $product,Request $request)
     {
-        return ReviewCollection::collection(Review::where('product_id',$product->id)->paginate(20));
+        $reviewPg=$this->getSortedCollectionData($request,'review',['product_id'=>$product->id]);
+        if($reviewPg->currentPage()<=$reviewPg->lastPage()){
+            return ReviewCollection::collection($reviewPg);
+        }else{
+            return $this->errorView('page_not_found', Response::HTTP_NOT_FOUND);
+        }
     }
 
     /**
