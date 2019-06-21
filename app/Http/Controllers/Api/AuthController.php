@@ -1,13 +1,17 @@
 <?php
+
 namespace App\Http\Controllers\Api;
+
 use App\Mail\RegistrationSuccessful;
 use App\Services\Mailer;
+use App\Services\TokenGenerator;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
+use Symfony\Component\HttpFoundation\Response;
 
 
 /**
@@ -23,8 +27,7 @@ use Illuminate\Support\Facades\Validator;
  *         url="http://www.apache.org/licenses/LICENSE-2.0.html"
  *     )
  * )
-
- *  @OA\Server(
+ * @OA\Server(
  *      url="/api/v1",
  *      description="API documentation"
  * )
@@ -43,11 +46,8 @@ use Illuminate\Support\Facades\Validator;
  *     bearerFormat="JWT",
  * )
  */
-
 class AuthController extends BaseApiController
 {
-    public $successStatus = 200;
-
     /**
      * @OA\Post(
      *      path="/register",
@@ -68,7 +68,8 @@ class AuthController extends BaseApiController
      *    )
      * )
      */
-    public function register(Request $request) {
+    public function register(Request $request)
+    {
         $validator = Validator::make($request->all(), [
             'name' => 'required',
             'email' => 'required|email',
@@ -76,9 +77,11 @@ class AuthController extends BaseApiController
             'c_password' => 'required|same:password',
         ]);
         if ($validator->fails()) {
-            return response()->json(['error'=>$validator->errors()], 401);                        }
+            return response()->json(['error' => $validator->errors()], 401);
+        }
         $input = $request->all();
         $input['password'] = bcrypt($input['password']);
+        $input['confirmation_token'] = TokenGenerator::generate();
 
         $user = User::create($input);
 
@@ -92,8 +95,49 @@ class AuthController extends BaseApiController
 //            Mailer::sendSuccessRegistrationMail($emailData);
 //        }
 
-        $success['token'] =  $user->createToken('AppName')->accessToken;
-        return response()->json(['success'=>$success], $this->successStatus);
+        return response()->json(['data' => 'successfully_registered'], Response::HTTP_OK);
+    }
+
+    /**
+     * @OA\Post(
+     *      path="/confirm",
+     *      tags={"User"},
+     *      summary="Confirm registration",
+     *      description="Returns successful confirmation information",
+     *     @OA\RequestBody(
+     *         description="Confirmation token",
+     *         required=true,
+     *         @OA\JsonContent(
+     *          required={"token"},
+     *          @OA\Property(property="token", type="string"),
+     *          ),
+     *      ),
+     *      @OA\Response(
+     *          response=200,
+     *          description="successful operation"
+     *       ),
+     *      @OA\Response(response=400, description="Bad request"),
+     *      @OA\Response(response=404, description="Resource Not Found"),
+     * )
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function confirm(Request $request)
+    {
+        $token = $request->get('token');
+        if (!is_null($token)) {
+            $user = User::where(['confirmation_token' => $token])->first();
+            if (!is_null($user)) {
+                $user->enabled = true;
+                $user->confirmation_token = "";
+                $user->update();
+                return response()->json(['data' => 'successfully_confirmed'], Response::HTTP_OK);
+            } else {
+                return response()->json(['error' => 'confirmation_token_not_found'], Response::HTTP_NOT_FOUND);
+            }
+        } else {
+            return response()->json(['error' => 'confirmation_token_not_provided'], Response::HTTP_BAD_REQUEST);
+        }
     }
 
 
@@ -117,13 +161,18 @@ class AuthController extends BaseApiController
      *    )
      * )
      */
-    public function login(){
-        if(Auth::attempt(['email' => request('email'), 'password' => request('password')])){
+    public function login()
+    {
+        if (Auth::attempt(['email' => request('email'), 'password' => request('password')])) {
             $user = Auth::user();
-            $success['token'] =  $user->createToken('AppName')-> accessToken;
-            return response()->json(['success' => $success], $this-> successStatus);
-        } else{
-            return response()->json(['error'=>'Unauthorised'], 401);
+            if ($user->enabled) {
+                $success['token'] = $user->createToken('AppName')->accessToken;
+                return response()->json(['data' => $success], Response::HTTP_OK);
+            } else {
+                return response()->json(['error' => 'profile_not_enabled'], Response::HTTP_UNAUTHORIZED);
+            }
+        } else {
+            return response()->json(['error' => 'Unauthorised'], Response::HTTP_UNAUTHORIZED);
         }
     }
 
@@ -145,9 +194,9 @@ class AuthController extends BaseApiController
      *     }
      * )
      */
-    public function getUser() {
-        $user = Auth::user();
-        return response()->json(['success' => $user], $this->successStatus);
+    public function getUser()
+    {
+        return response()->json(['data' => Auth::user()], Response::HTTP_OK);
     }
 
 
@@ -167,11 +216,15 @@ class AuthController extends BaseApiController
      *         {"bearerAuth": {}}
      *     }
      * )
+     * @param User $user
+     * @return \Illuminate\Http\JsonResponse
+     * @throws \Exception
      */
-    public function deleteUser(User $user) {
-        $id=$user->id;
+    public function deleteUser(User $user)
+    {
+        $id = $user->id;
         $user->delete();
-        return response()->json(['success' => 'User with ID '.$id.' was successfully deleted'], $this->successStatus);
+        return response()->json(['data' => 'User with ID ' . $id . ' was successfully deleted'], Response::HTTP_OK);
     }
 
     /**
@@ -191,9 +244,10 @@ class AuthController extends BaseApiController
      *     }
      * )
      */
-    public function deleteAuthUser() {
-        $id=$user = Auth::id();
+    public function deleteAuthUser()
+    {
+        $id = Auth::id();
         Auth::user()->delete();
-        return response()->json(['success' => 'User with ID '.$id.' was successfully deleted'], $this->successStatus);
+        return response()->json(['data' => 'User with ID ' . $id . ' was successfully deleted'], Response::HTTP_OK);
     }
 }

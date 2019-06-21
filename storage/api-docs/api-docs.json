@@ -48,6 +48,46 @@
                 }
             }
         },
+        "/confirm": {
+            "post": {
+                "tags": [
+                    "User"
+                ],
+                "summary": "Confirm registration",
+                "description": "Returns successful confirmation information",
+                "operationId": "App\\Http\\Controllers\\Api\\AuthController::confirm",
+                "requestBody": {
+                    "description": "Confirmation token",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "token"
+                                ],
+                                "properties": {
+                                    "token": {
+                                        "type": "string"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "successful operation"
+                    },
+                    "400": {
+                        "description": "Bad request"
+                    },
+                    "404": {
+                        "description": "Resource Not Found"
+                    }
+                }
+            }
+        },
         "/login": {
             "post": {
                 "tags": [
