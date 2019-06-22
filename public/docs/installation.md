@@ -33,3 +33,8 @@
 App is available on ``8187`` port
 --
     http://127.0.0.1:8187
+    
+## In order to populate Database with fake data just run following command:
+```
+docker exec -it laravel_api  php artisan db:seed
+```
