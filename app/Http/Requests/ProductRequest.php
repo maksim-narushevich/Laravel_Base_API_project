@@ -26,9 +26,9 @@ class ProductRequest extends FormRequest
         return [
             'name' => 'required|max:255|unique:products',
             'description' => 'required',
-            'price' => 'required|max:10',
-            'stock' => 'required|max:6',
-            'discount' => 'required|max:2',
+            'price' => 'required|integer|max:10',
+            'stock' => 'required|integer|max:6',
+            'discount' => 'required|integer|between:0,99',
         ];
     }
 
@@ -44,8 +44,10 @@ class ProductRequest extends FormRequest
             'stock.max' => 'Stock field max value is 6',
             'discount.required' => 'Discount field is required',
             'discount.max' => 'Discount field max value is 2',
-            'star.between' => 'Star field value must be between 0 and 5',
-            'star.integer' => 'Star field value must an integer value',
+            'discount.between' => 'Discount field value must be between 0 and 99',
+            'discount.integer' => 'Discount field value must an integer value',
+            'stock.integer' => 'Stock field value must an integer value',
+            'price.integer' => 'Price field value must an integer value',
         ];
     }
 }
