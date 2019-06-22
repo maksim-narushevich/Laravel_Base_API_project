@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Http\Requests\UserRequest;
 use App\Mail\RegistrationSuccessful;
 use App\Services\Mailer;
 use App\Services\Pagination\Paginator;
@@ -68,25 +69,20 @@ class AuthController extends BaseApiController
      *        @OA\Schema(ref="#/components/schemas/Error")
      *    )
      * )
+     * @param UserRequest $request
+     * @return \Illuminate\Http\JsonResponse
      */
-    public function register(Request $request)
+    public function register(UserRequest $request)
     {
-        $validator = Validator::make($request->all(), [
-            'name' => 'required',
-            'email' => 'required|email',
-            'password' => 'required',
-            'c_password' => 'required|same:password',
-        ]);
-        if ($validator->fails()) {
-            return response()->json(['error' => $validator->errors()], 401);
-        }
         $input = $request->all();
-        $input['password'] = bcrypt($input['password']);
-        $input['confirmation_token'] = TokenGenerator::generate();
+        $checkUser=User::where('email',$input['email'])->first();
+        if(is_null($checkUser)){
+            $input['password'] = bcrypt($input['password']);
+            $input['confirmation_token'] = TokenGenerator::generate();
 
-        $user = User::create($input);
+            $user = User::create($input);
 
-        //TODO Temporarily deactivate email sending
+            //TODO Temporarily deactivate email sending
 //        //-- Get current environment in order prevent sending email in 'test' mode
 //        $env = app()->environment();
 //        //-- Send email after successful registration
@@ -95,7 +91,11 @@ class AuthController extends BaseApiController
 //            $emailData['user']=$user;
 //            Mailer::sendSuccessRegistrationMail($emailData);
 //        }
-        return $this->view('successfully_registered', Response::HTTP_OK);
+            return $this->view('successfully_registered', Response::HTTP_OK);
+        }else{
+            return $this->errorView('such_email_already_registered', Response::HTTP_BAD_REQUEST);
+        }
+
     }
 
     /**
