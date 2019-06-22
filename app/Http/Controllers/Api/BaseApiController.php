@@ -7,18 +7,19 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Models\Product;
 use App\Models\Review;
+use App\Utils\ErrorFormatter;
 use Illuminate\Http\Request;
 
 class BaseApiController extends Controller
 {
     /**
-     * @param array $data
+     * @param mixed $data
      * @param null $statusCode
      * @param null $placeholders
      * @param array $headers
      * @return \Illuminate\Http\JsonResponse
      */
-    protected function view(array $data, $statusCode = null, $placeholders = null, array $headers = [])
+    protected function view( $data, $statusCode = null, $placeholders = null, array $headers = [])
     {
         if (!is_array($data) || !isset($data['data'])) {
             $data = array(
@@ -38,11 +39,7 @@ class BaseApiController extends Controller
      */
     protected function errorView($data, $errorCode = null, $placeholders = null, array $headers = [])
     {
-            $data = array(
-                "error" => !is_null($data) ? $data : array(),
-            );
-
-        return response()->json($data, $errorCode);
+        return ErrorFormatter::getErrorFormat($data,$errorCode);
     }
 
     /**
@@ -55,7 +52,7 @@ class BaseApiController extends Controller
     {
         $orderBy = $request->get("order_by") ?? "id";
         $sortBy = (in_array(strtoupper($request->get("sort_by")), ["ASC", "DESC"])) ? $request->get("sort_by") : "ASC";
-        if (in_array($type, ['product'])) {
+        if (in_array($type, ['product','review'])) {
             if($type==='review'){
                 $collection =Review::where('product_id',$arrParams['product_id'])->orderBy($orderBy, $sortBy);
             }else{

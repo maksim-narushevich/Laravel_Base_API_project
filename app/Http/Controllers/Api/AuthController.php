@@ -95,8 +95,7 @@ class AuthController extends BaseApiController
 //            $emailData['user']=$user;
 //            Mailer::sendSuccessRegistrationMail($emailData);
 //        }
-
-        return response()->json(['data' => 'successfully_registered'], Response::HTTP_OK);
+        return $this->view('successfully_registered', Response::HTTP_OK);
     }
 
     /**
@@ -132,12 +131,12 @@ class AuthController extends BaseApiController
                 $user->enabled = true;
                 $user->confirmation_token = "";
                 $user->update();
-                return response()->json(['data' => 'successfully_confirmed'], Response::HTTP_OK);
+                return $this->view('successfully_confirmed', Response::HTTP_OK);
             } else {
-                return response()->json(['error' => 'confirmation_token_not_found'], Response::HTTP_NOT_FOUND);
+                return $this->errorView('confirmation_token_not_found', Response::HTTP_NOT_FOUND);
             }
         } else {
-            return response()->json(['error' => 'confirmation_token_not_provided'], Response::HTTP_BAD_REQUEST);
+            return $this->errorView('confirmation_token_not_provided', Response::HTTP_BAD_REQUEST);
         }
     }
 
@@ -168,12 +167,12 @@ class AuthController extends BaseApiController
             $user = Auth::user();
             if ($user->enabled) {
                 $success['token'] = $user->createToken('AppName')->accessToken;
-                return response()->json(['data' => $success], Response::HTTP_OK);
+                return $this->view($success, Response::HTTP_OK);
             } else {
-                return response()->json(['error' => 'profile_not_enabled'], Response::HTTP_UNAUTHORIZED);
+                return $this->errorView('profile_not_enabled', Response::HTTP_UNAUTHORIZED);
             }
         } else {
-            return response()->json(['error' => 'Unauthorised'], Response::HTTP_UNAUTHORIZED);
+            return $this->errorView('bad_credentials', Response::HTTP_UNAUTHORIZED);
         }
     }
 
@@ -195,7 +194,7 @@ class AuthController extends BaseApiController
      *     }
      * )
      */
-    public function getUser(Request $request, Paginator $paginator)
+    public function getUser()
     {
         return $this->view(Auth::user(),Response::HTTP_OK);
     }
@@ -227,7 +226,6 @@ class AuthController extends BaseApiController
         return $this->view($paginator->paginate(User::all()->toArray(),$request),Response::HTTP_OK);
     }
 
-
     /**
      * @OA\Delete(
      *      path="/user/delete/{id}",
@@ -252,7 +250,7 @@ class AuthController extends BaseApiController
     {
         $id = $user->id;
         $user->delete();
-        return response()->json(['data' => 'User with ID ' . $id . ' was successfully deleted'], Response::HTTP_OK);
+        return $this->view('User with ID ' . $id . ' was successfully deleted',Response::HTTP_OK);
     }
 
     /**
@@ -276,6 +274,6 @@ class AuthController extends BaseApiController
     {
         $id = Auth::id();
         Auth::user()->delete();
-        return response()->json(['data' => 'User with ID ' . $id . ' was successfully deleted'], Response::HTTP_OK);
+        return $this->view('User with ID ' . $id . ' was successfully deleted',Response::HTTP_OK);
     }
 }
