@@ -19,10 +19,10 @@ Route::prefix('v1')->group(function(){
     Route::post('confirm', 'Api\AuthController@confirm');
 
     Route::group(['middleware' => 'auth:api'], function(){
-        Route::get('auth-user', 'Api\AuthController@getUser');
-        Route::get('users', 'Api\AuthController@getUserList');
-        Route::delete('auth-user/delete', 'Api\AuthController@deleteAuthUser');
-        Route::delete('user/delete/{user}', 'Api\AuthController@deleteUser');
+        Route::get('auth-user', 'Api\UserController@getUser');
+        Route::get('users', 'Api\UserController@getUserList');
+        Route::delete('auth-user/delete', 'Api\UserController@deleteAuthUser');
+        Route::delete('user/delete/{user}', 'Api\UserController@deleteUser');
     });
 
     Route::apiResource('/products',"Api\ProductController");

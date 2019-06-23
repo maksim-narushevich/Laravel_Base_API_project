@@ -117,124 +117,6 @@
                 }
             }
         },
-        "/auth-user": {
-            "get": {
-                "tags": [
-                    "User"
-                ],
-                "summary": "Get authorized user details",
-                "description": "Returns logged user data",
-                "operationId": "App\\Http\\Controllers\\Api\\AuthController::getUser",
-                "responses": {
-                    "200": {
-                        "description": "successful operation",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/UserItem"
-                                }
-                            }
-                        }
-                    },
-                    "400": {
-                        "description": "Bad request"
-                    },
-                    "404": {
-                        "description": "Resource Not Found"
-                    }
-                },
-                "security": [
-                    {
-                        "bearerAuth": []
-                    }
-                ]
-            }
-        },
-        "/users": {
-            "get": {
-                "tags": [
-                    "User"
-                ],
-                "summary": "All users",
-                "description": "Returns liss of all users",
-                "operationId": "App\\Http\\Controllers\\Api\\AuthController::getUserList",
-                "responses": {
-                    "200": {
-                        "description": "successful operation",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/UserItem"
-                                }
-                            }
-                        }
-                    },
-                    "400": {
-                        "description": "Bad request"
-                    },
-                    "404": {
-                        "description": "Resource Not Found"
-                    }
-                },
-                "security": [
-                    {
-                        "bearerAuth": []
-                    }
-                ]
-            }
-        },
-        "/user/delete/{id}": {
-            "delete": {
-                "tags": [
-                    "User"
-                ],
-                "summary": "Delete user by ID",
-                "description": "Returns successful delete information",
-                "operationId": "App\\Http\\Controllers\\Api\\AuthController::deleteUser",
-                "responses": {
-                    "200": {
-                        "description": "successful operation"
-                    },
-                    "400": {
-                        "description": "Bad request"
-                    },
-                    "404": {
-                        "description": "Resource Not Found"
-                    }
-                },
-                "security": [
-                    {
-                        "bearerAuth": []
-                    }
-                ]
-            }
-        },
-        "/auth-user/delete": {
-            "delete": {
-                "tags": [
-                    "User"
-                ],
-                "summary": "Delete authorized user",
-                "description": "Returns successful delete information",
-                "operationId": "App\\Http\\Controllers\\Api\\AuthController::deleteAuthUser",
-                "responses": {
-                    "200": {
-                        "description": "successful operation"
-                    },
-                    "400": {
-                        "description": "Bad request"
-                    },
-                    "404": {
-                        "description": "Resource Not Found"
-                    }
-                },
-                "security": [
-                    {
-                        "bearerAuth": []
-                    }
-                ]
-            }
-        },
         "/products": {
             "get": {
                 "tags": [
@@ -623,6 +505,124 @@
                     },
                     "404": {
                         "description": "Review not found"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/auth-user": {
+            "get": {
+                "tags": [
+                    "User"
+                ],
+                "summary": "Get authorized user details",
+                "description": "Returns logged user data",
+                "operationId": "App\\Http\\Controllers\\Api\\UserController::getUser",
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UserItem"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request"
+                    },
+                    "404": {
+                        "description": "Resource Not Found"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/users": {
+            "get": {
+                "tags": [
+                    "User"
+                ],
+                "summary": "All users",
+                "description": "Returns liss of all users",
+                "operationId": "App\\Http\\Controllers\\Api\\UserController::getUserList",
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UserItem"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request"
+                    },
+                    "404": {
+                        "description": "Resource Not Found"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/user/delete/{id}": {
+            "delete": {
+                "tags": [
+                    "User"
+                ],
+                "summary": "Delete user by ID",
+                "description": "Returns successful delete information",
+                "operationId": "App\\Http\\Controllers\\Api\\UserController::deleteUser",
+                "responses": {
+                    "200": {
+                        "description": "successful operation"
+                    },
+                    "400": {
+                        "description": "Bad request"
+                    },
+                    "404": {
+                        "description": "Resource Not Found"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/auth-user/delete": {
+            "delete": {
+                "tags": [
+                    "User"
+                ],
+                "summary": "Delete authorized user",
+                "description": "Returns successful delete information",
+                "operationId": "App\\Http\\Controllers\\Api\\UserController::deleteAuthUser",
+                "responses": {
+                    "200": {
+                        "description": "successful operation"
+                    },
+                    "400": {
+                        "description": "Bad request"
+                    },
+                    "404": {
+                        "description": "Resource Not Found"
                     }
                 },
                 "security": [
