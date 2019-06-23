@@ -48,7 +48,7 @@ class AuthController extends BaseApiController
     /**
      * @OA\Post(
      *      path="/register",
-     *      tags={"User"},
+     *      tags={"Auth"},
      *     operationId="addUser",
      *     description="Create a new user.",
      *     summary="Register new user and return JWT token",
@@ -96,7 +96,7 @@ class AuthController extends BaseApiController
     /**
      * @OA\Post(
      *      path="/confirm",
-     *      tags={"User"},
+     *      tags={"Auth"},
      *      summary="Confirm registration",
      *      description="Returns successful confirmation information",
      *     @OA\RequestBody(
@@ -139,7 +139,7 @@ class AuthController extends BaseApiController
     /**
      * @OA\Post(
      *      path="/login",
-     *      tags={"User"},
+     *      tags={"Auth"},
      *     operationId="loginUser",
      *     description="Login user.",
      *     summary="Login with existing user and obtain JWT token",

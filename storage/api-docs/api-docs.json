@@ -22,7 +22,7 @@
         "/register": {
             "post": {
                 "tags": [
-                    "User"
+                    "Auth"
                 ],
                 "summary": "Register new user and return JWT token",
                 "description": "Create a new user.",
@@ -51,7 +51,7 @@
         "/confirm": {
             "post": {
                 "tags": [
-                    "User"
+                    "Auth"
                 ],
                 "summary": "Confirm registration",
                 "description": "Returns successful confirmation information",
@@ -91,7 +91,7 @@
         "/login": {
             "post": {
                 "tags": [
-                    "User"
+                    "Auth"
                 ],
                 "summary": "Login with existing user and obtain JWT token",
                 "description": "Login user.",
@@ -547,7 +547,7 @@
                 },
                 "responses": {
                     "200": {
-                        "description": "successful operation"
+                        "description": "Successful operation"
                     },
                     "400": {
                         "description": "Bad request"
@@ -563,7 +563,7 @@
         "/auth-user": {
             "get": {
                 "tags": [
-                    "User"
+                    "Auth"
                 ],
                 "summary": "Get authorized user details",
                 "description": "Returns logged user data",
@@ -655,7 +655,7 @@
         "/auth-user/delete": {
             "delete": {
                 "tags": [
-                    "User"
+                    "Auth"
                 ],
                 "summary": "Delete authorized user",
                 "description": "Returns successful delete information",

@@ -14,7 +14,7 @@ class UserController extends BaseApiController
     /**
      * @OA\Get(
      *      path="/auth-user",
-     *      tags={"User"},
+     *      tags={"Auth"},
      *      summary="Get authorized user details",
      *      description="Returns logged user data",
      *      @OA\Response(
@@ -91,7 +91,7 @@ class UserController extends BaseApiController
     /**
      * @OA\Delete(
      *      path="/auth-user/delete",
-     *      tags={"User"},
+     *      tags={"Auth"},
      *      summary="Delete authorized user",
      *      description="Returns successful delete information",
      *      @OA\Response(
