@@ -23,6 +23,9 @@ Route::prefix('v1')->group(function(){
         Route::get('users', 'Api\UserController@getUserList');
         Route::delete('auth-user/delete', 'Api\UserController@deleteAuthUser');
         Route::delete('user/delete/{user}', 'Api\UserController@deleteUser');
+
+
+        Route::post('services/sms', 'Api\ServicesController@sendSMS');
     });
 
     Route::apiResource('/products',"Api\ProductController");

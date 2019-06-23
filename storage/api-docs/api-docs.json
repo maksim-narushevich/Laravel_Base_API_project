@@ -514,6 +514,52 @@
                 ]
             }
         },
+        "/services/sms": {
+            "post": {
+                "tags": [
+                    "Services"
+                ],
+                "summary": "Send SMS to spevicified phone number",
+                "description": "Returns successful information",
+                "operationId": "App\\Http\\Controllers\\Api\\ServicesController::sendSMS",
+                "requestBody": {
+                    "description": "Send message to valid phone number",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "number",
+                                    "message"
+                                ],
+                                "properties": {
+                                    "number": {
+                                        "type": "string"
+                                    },
+                                    "message": {
+                                        "type": "string"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "successful operation"
+                    },
+                    "400": {
+                        "description": "Bad request"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
         "/auth-user": {
             "get": {
                 "tags": [
@@ -769,10 +815,6 @@
                             },
                             "email": {
                                 "type": "string"
-                            },
-                            "email_verified_at": {
-                                "type": "string",
-                                "format": "date"
                             },
                             "created_at": {
                                 "type": "string",
