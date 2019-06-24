@@ -2,6 +2,7 @@
 
 namespace App;
 
+use App\Models\Image;
 use App\Models\Product;
 use App\Models\Review;
 use Illuminate\Notifications\Notifiable;
@@ -49,5 +50,10 @@ class User extends Authenticatable
     public function reviews()
     {
         return $this->hasMany(Review::class);
+    }
+
+    public function images()
+    {
+        return $this->hasMany(Image::class);
     }
 }

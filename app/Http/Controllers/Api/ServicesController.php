@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Http\Resources\Image\ImageResource;
+use App\Models\Image;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
@@ -81,7 +83,7 @@ class ServicesController extends BaseApiController
      *     }
      * )
      * @param Request $request
-     * @return array
+     * @return \Illuminate\Http\JsonResponse
      * @throws \Illuminate\Validation\ValidationException
      */
     public function imageUpload(Request $request)
@@ -96,10 +98,20 @@ class ServicesController extends BaseApiController
                 'image.max' => 'Image max allowed size is 1024 b',
             ]);
 
-        $fileName = time()."_".request()->image->getClientOriginalName();
-        Storage::disk('local')->put("/public/uploads/".Auth::id()."/images/".$fileName, request()->image->getRealPath());
-        dd("Success!");
 
+        $image=Image::create([
+            'name'=>explode(".",request()->image->getClientOriginalName())[0],
+            'storage'=>'local',
+            'user_id'=>Auth::id(),
+            'size'=>request()->image->getSize(),
+            'extension'=>request()->image->getClientOriginalExtension(),
+        ]);
+        if(!is_null($image)){
+            $fileName = time()."_".request()->image->getClientOriginalName();
+            Storage::disk('local')->put("/public/uploads/".Auth::id()."/images/".$fileName, request()->image->getRealPath());
+            return $this->view(new ImageResource($image), Response::HTTP_CREATED);
+        }else{
+            return $this->errorView('can_upload_image', Response::HTTP_BAD_REQUEST);
+        }
     }
-
 }

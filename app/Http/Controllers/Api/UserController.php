@@ -1,6 +1,7 @@
 <?php
 namespace App\Http\Controllers\Api;
 
+use App\Http\Resources\User\UserResource;
 use App\Services\Pagination\Paginator;
 use Illuminate\Http\Request;
 use App\User;
@@ -31,7 +32,7 @@ class UserController extends BaseApiController
      */
     public function getUser()
     {
-        return $this->view(Auth::user(),Response::HTTP_OK);
+        return $this->view(new UserResource(Auth::user()),Response::HTTP_OK);
     }
 
 
