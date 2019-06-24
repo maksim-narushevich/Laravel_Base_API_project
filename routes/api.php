@@ -26,6 +26,7 @@ Route::prefix('v1')->group(function(){
 
 
         Route::post('services/sms', 'Api\ServicesController@sendSMS');
+        Route::post('services/image/upload', 'Api\ServicesController@imageUpload');
     });
 
     Route::apiResource('/products',"Api\ProductController");

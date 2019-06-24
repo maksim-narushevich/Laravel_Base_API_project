@@ -22,7 +22,7 @@
         "/register": {
             "post": {
                 "tags": [
-                    "User"
+                    "Auth"
                 ],
                 "summary": "Register new user and return JWT token",
                 "description": "Create a new user.",
@@ -51,7 +51,7 @@
         "/confirm": {
             "post": {
                 "tags": [
-                    "User"
+                    "Auth"
                 ],
                 "summary": "Confirm registration",
                 "description": "Returns successful confirmation information",
@@ -91,7 +91,7 @@
         "/login": {
             "post": {
                 "tags": [
-                    "User"
+                    "Auth"
                 ],
                 "summary": "Login with existing user and obtain JWT token",
                 "description": "Login user.",
@@ -115,91 +115,6 @@
                         "description": "unexpected error"
                     }
                 }
-            }
-        },
-        "/auth-user": {
-            "get": {
-                "tags": [
-                    "User"
-                ],
-                "summary": "Get authorized user details",
-                "description": "Returns logged user data",
-                "operationId": "App\\Http\\Controllers\\Api\\AuthController::getUser",
-                "responses": {
-                    "200": {
-                        "description": "successful operation",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/UserItem"
-                                }
-                            }
-                        }
-                    },
-                    "400": {
-                        "description": "Bad request"
-                    },
-                    "404": {
-                        "description": "Resource Not Found"
-                    }
-                },
-                "security": [
-                    {
-                        "bearerAuth": []
-                    }
-                ]
-            }
-        },
-        "/user/delete/{id}": {
-            "delete": {
-                "tags": [
-                    "User"
-                ],
-                "summary": "Delete user by ID",
-                "description": "Returns successful delete information",
-                "operationId": "App\\Http\\Controllers\\Api\\AuthController::deleteUser",
-                "responses": {
-                    "200": {
-                        "description": "successful operation"
-                    },
-                    "400": {
-                        "description": "Bad request"
-                    },
-                    "404": {
-                        "description": "Resource Not Found"
-                    }
-                },
-                "security": [
-                    {
-                        "bearerAuth": []
-                    }
-                ]
-            }
-        },
-        "/auth-user/delete": {
-            "delete": {
-                "tags": [
-                    "User"
-                ],
-                "summary": "Delete authorized user",
-                "description": "Returns successful delete information",
-                "operationId": "App\\Http\\Controllers\\Api\\AuthController::deleteAuthUser",
-                "responses": {
-                    "200": {
-                        "description": "successful operation"
-                    },
-                    "400": {
-                        "description": "Bad request"
-                    },
-                    "404": {
-                        "description": "Resource Not Found"
-                    }
-                },
-                "security": [
-                    {
-                        "bearerAuth": []
-                    }
-                ]
             }
         },
         "/products": {
@@ -387,6 +302,427 @@
                     }
                 ]
             }
+        },
+        "/products/{id}/reviews": {
+            "get": {
+                "tags": [
+                    "Review"
+                ],
+                "summary": "Get all product's reviews",
+                "description": "Returns all product's reviews details",
+                "operationId": "getProductReviews",
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Review"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request"
+                    },
+                    "404": {
+                        "description": "Resource Not Found"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Review"
+                ],
+                "summary": "Store a newly created resource in storage.",
+                "description": "Create a new review.",
+                "operationId": "addReview",
+                "requestBody": {
+                    "description": "Create review",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/NewReview"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Null response"
+                    },
+                    "default": {
+                        "description": "unexpected error"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/products/{id}/reviews/{review}": {
+            "get": {
+                "tags": [
+                    "Review"
+                ],
+                "summary": "Get review details",
+                "description": "Returns review details",
+                "operationId": "getReviewById",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Product id",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "review",
+                        "in": "path",
+                        "description": "ID of review to show",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Product"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request"
+                    },
+                    "404": {
+                        "description": "Resource Not Found"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "put": {
+                "tags": [
+                    "Review"
+                ],
+                "summary": "Update the specified resource in storage.",
+                "description": "Update review.",
+                "operationId": "updateReview",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Product id",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "review",
+                        "in": "path",
+                        "description": "ID of review to be updated",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "description": "Update review",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/NewReview"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Null response"
+                    },
+                    "default": {
+                        "description": "unexpected error"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Review"
+                ],
+                "summary": "Delete review",
+                "description": "This can only be done by the logged in user.",
+                "operationId": "deleteReview",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID of product",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "review",
+                        "in": "path",
+                        "description": "ID of review to be deleted",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "400": {
+                        "description": "Invalid ID supplied"
+                    },
+                    "404": {
+                        "description": "Review not found"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/services/sms": {
+            "post": {
+                "tags": [
+                    "Services"
+                ],
+                "summary": "Send SMS to spevicified phone number",
+                "description": "Returns successful information",
+                "operationId": "App\\Http\\Controllers\\Api\\ServicesController::sendSMS",
+                "requestBody": {
+                    "description": "Send message to valid phone number",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "number",
+                                    "message"
+                                ],
+                                "properties": {
+                                    "number": {
+                                        "type": "string"
+                                    },
+                                    "message": {
+                                        "type": "string"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    },
+                    "400": {
+                        "description": "Bad request"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/services/image/upload": {
+            "post": {
+                "tags": [
+                    "Services"
+                ],
+                "summary": "Image uploader service",
+                "description": "Returns successful information",
+                "operationId": "App\\Http\\Controllers\\Api\\ServicesController::imageUpload",
+                "requestBody": {
+                    "description": "Upload image to provided storage (default local)",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "number",
+                                    "message"
+                                ],
+                                "properties": {
+                                    "number": {
+                                        "type": "string"
+                                    },
+                                    "message": {
+                                        "type": "string"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    },
+                    "400": {
+                        "description": "Bad request"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/auth-user": {
+            "get": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Get authorized user details",
+                "description": "Returns logged user data",
+                "operationId": "App\\Http\\Controllers\\Api\\UserController::getUser",
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UserItem"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request"
+                    },
+                    "404": {
+                        "description": "Resource Not Found"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/users": {
+            "get": {
+                "tags": [
+                    "User"
+                ],
+                "summary": "All users",
+                "description": "Returns liss of all users",
+                "operationId": "App\\Http\\Controllers\\Api\\UserController::getUserList",
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UserItem"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request"
+                    },
+                    "404": {
+                        "description": "Resource Not Found"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/user/delete/{id}": {
+            "delete": {
+                "tags": [
+                    "User"
+                ],
+                "summary": "Delete user by ID",
+                "description": "Returns successful delete information",
+                "operationId": "App\\Http\\Controllers\\Api\\UserController::deleteUser",
+                "responses": {
+                    "200": {
+                        "description": "successful operation"
+                    },
+                    "400": {
+                        "description": "Bad request"
+                    },
+                    "404": {
+                        "description": "Resource Not Found"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/auth-user/delete": {
+            "delete": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Delete authorized user",
+                "description": "Returns successful delete information",
+                "operationId": "App\\Http\\Controllers\\Api\\UserController::deleteAuthUser",
+                "responses": {
+                    "200": {
+                        "description": "successful operation"
+                    },
+                    "400": {
+                        "description": "Bad request"
+                    },
+                    "404": {
+                        "description": "Resource Not Found"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
         }
     },
     "components": {
@@ -425,6 +761,49 @@
                             "price",
                             "discount"
                         ]
+                    }
+                ]
+            },
+            "Review": {
+                "properties": {
+                    "id": {
+                        "type": "integer"
+                    },
+                    "product_name": {
+                        "type": "string"
+                    },
+                    "user_id": {
+                        "type": "integer"
+                    },
+                    "username": {
+                        "type": "string"
+                    },
+                    "text": {
+                        "type": "string"
+                    },
+                    "star": {
+                        "type": "integer"
+                    }
+                },
+                "type": "object"
+            },
+            "NewReview": {
+                "type": "object",
+                "allOf": [
+                    {
+                        "required": [
+                            "star",
+                            "text"
+                        ],
+                        "properties": {
+                            "text": {
+                                "type": "string"
+                            },
+                            "star": {
+                                "type": "integer"
+                            }
+                        },
+                        "type": "object"
                     }
                 ]
             },
@@ -482,10 +861,6 @@
                             },
                             "email": {
                                 "type": "string"
-                            },
-                            "email_verified_at": {
-                                "type": "string",
-                                "format": "date"
                             },
                             "created_at": {
                                 "type": "string",

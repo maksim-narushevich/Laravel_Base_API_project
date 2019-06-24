@@ -51,7 +51,7 @@ class Handler extends ExceptionHandler
      */
     public function render($request, Exception $exception)
     {
-        if ($request->isJson()) {
+        if ($request->isJson() || strpos($request->header('content-type'), 'multipart/form-data') !== false) {
             return $this->handleApiException($exception, $request);
         } else {
             $res = parent::render($request, $exception);
