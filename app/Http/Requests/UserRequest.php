@@ -24,7 +24,7 @@ class UserRequest extends FormRequest
     public function rules()
     {
         return [
-            'name' => 'required',
+            'name' => 'required|alpha_num',
             'email' => 'required|email',
             'password' => 'required',
             'c_password' => 'required|same:password',
@@ -35,6 +35,7 @@ class UserRequest extends FormRequest
     {
         return [
             'name.required' => 'Name field is required',
+            'name.alpha_num' => 'Name should be alpha numeric value',
             'email.required' => 'Email field is required',
             'password.required' => 'Password field is required',
             'c_password.required' => 'c_password field is required',
