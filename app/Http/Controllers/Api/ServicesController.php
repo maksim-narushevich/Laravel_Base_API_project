@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Resources\Image\ImageResource;
 use App\Models\Image;
+use App\Services\SMS\SMSFactory;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
@@ -40,22 +41,34 @@ class ServicesController extends BaseApiController
      * @param Request $request
      * @return array
      * @throws \Illuminate\Validation\ValidationException
+     * @throws \App\Services\SMS\ServiceException
      */
     public function sendSMS(Request $request)
     {
         //-- Validate input data
         $this->validate($request, [
-            'number' => 'required|regex:/\+[0-9]{12}/|size:13',
+            'number' => 'required|regex:/\+[0-9]{11,}/|min:12',
             'message' => 'required'
         ],
             [
                 'number.required' => 'Number field is required',
                 'number.regex' => 'Phone number format is invalid',
-                'number.size' => 'Phone number should consist of 12 digits only',
+                'number.min' => 'Phone number should consist of minimum 11 digits',
                 'message.required' => 'Message field is required',
             ]);
 
-        dd($request->all());
+        $sms=SMSFactory::getService("aws");
+        $response = $sms->publish([
+            'Message' => $request->get('message'),
+            'PhoneNumber' => $request->get('number'),
+            'MessageAttributes' => [
+                'AWS.SNS.SMS.SMSType' => [
+                    'DataType' => 'String',
+                    'StringValue' => 'Transactional',
+                ]
+            ],
+        ]);
+        dd($response);
     }
 
     /**
