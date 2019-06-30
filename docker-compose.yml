@@ -15,6 +15,7 @@ services:
         depends_on:
             - mysql_api
             - redis_api
+            - rabbitmq_api
     nginx_api:
         image: nginx:latest
         ports:
@@ -53,6 +54,19 @@ services:
         ports:
             - 25
             - 8127:80
+
+    rabbitmq_api:
+        image: rabbitmq:3-management
+        networks:
+            - docker-shared-services
+        environment:
+            RABBITMQ_ERLANG_COOKIE: "SWQOKODSQALRPCLNMEQG"
+            RABBITMQ_DEFAULT_USER: "guest"
+            RABBITMQ_DEFAULT_PASS: "guest"
+            RABBITMQ_DEFAULT_VHOST: "/"
+        ports:
+            - "15672:15672"
+            - "5672:5672"
 
 networks:
   docker-shared-services:
