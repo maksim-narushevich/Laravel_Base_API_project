@@ -6,6 +6,7 @@ use App\Exceptions\NotBelongsToUser;
 use App\Http\Requests\ProductRequest;
 use App\Http\Resources\Product\ProductCollection;
 use App\Http\Resources\Product\ProductResource;
+use App\Jobs\TestJob;
 use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -44,6 +45,12 @@ class ProductController extends BaseApiController
      */
     public function index(Request $request)
     {
+
+//        $product=Product::findOrFail(9);
+//
+//        //dispatch test job
+//        TestJob::dispatch($product);
+
         $productsPg = $this->getSortedCollectionData($request, 'product');
         if (!empty($productsPg)) {
             if ($productsPg->currentPage() <= $productsPg->lastPage()) {
