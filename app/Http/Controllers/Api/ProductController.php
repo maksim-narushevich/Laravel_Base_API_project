@@ -2,29 +2,27 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Http\Controllers\Controller;
+use App\Exceptions\NotBelongsToUser;
 use App\Http\Requests\ProductRequest;
 use App\Http\Resources\Product\ProductCollection;
 use App\Http\Resources\Product\ProductResource;
+use App\Jobs\TestJob;
 use App\Models\Product;
 use Illuminate\Http\Request;
-use App\Exceptions\ProductNotBelongsToUser;
 use Illuminate\Support\Facades\Auth;
 use Symfony\Component\HttpFoundation\Response;
 
 class ProductController extends BaseApiController
 {
-
     public function __construct()
     {
-        //$this->middleware('auth:api')->except('index','show');
         $this->middleware('auth:api');
     }
 
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\Resources\Json\AnonymousResourceCollection
+     * @param Request $request
      *
      * @OA\Get(
      *      path="/products",
@@ -43,28 +41,32 @@ class ProductController extends BaseApiController
      *         {"bearerAuth": {}}
      *     }
      * )
+     * @return \Illuminate\Http\JsonResponse|\Illuminate\Http\Resources\Json\AnonymousResourceCollection
      */
-    public function index()
+    public function index(Request $request)
     {
-        return ProductCollection::collection(Product::paginate(20));
-    }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return void
-     */
-    public function create()
-    {
-        //
+//        $product=Product::findOrFail(9);
+//
+//        //dispatch test job
+//        TestJob::dispatch($product);
+
+        $productsPg = $this->getSortedCollectionData($request, 'product');
+        if (!empty($productsPg)) {
+            if ($productsPg->currentPage() <= $productsPg->lastPage()) {
+                return ProductCollection::collection($productsPg);
+            } else {
+                return $this->errorView('page_not_found', Response::HTTP_NOT_FOUND);
+            }
+        }else{
+            return $this->errorView('products_not_found', Response::HTTP_NOT_FOUND);
+        }
     }
 
     /**
      * Store a newly created resource in storage.
      *
      * @param \App\Http\Requests\ProductRequest $request
-     *
-     * @return \Illuminate\Http\Response
      *
      * @OA\Post(
      *      path="/products",
@@ -86,6 +88,7 @@ class ProductController extends BaseApiController
      *         {"bearerAuth": {}}
      *     }
      * )
+     * @return \Illuminate\Http\JsonResponse
      */
     public function store(ProductRequest $request)
     {
@@ -97,9 +100,7 @@ class ProductController extends BaseApiController
         $product->price = $request->price;
         $product->discount = $request->discount;
         $product->save();
-        return response([
-            'data' => new ProductResource($product)
-        ],Response::HTTP_CREATED);
+        return $this->view( new ProductResource($product),Response::HTTP_CREATED);
     }
 
     /**
@@ -107,7 +108,6 @@ class ProductController extends BaseApiController
      *
      * @param \App\Models\Product $product
      *
-     * @return \App\Http\Resources\Product\ProductResource
      *
      * @OA\Get(
      *      path="/products/{id}",
@@ -135,33 +135,22 @@ class ProductController extends BaseApiController
      *         {"bearerAuth": {}}
      *     }
      * )
+     * @return \Illuminate\Http\JsonResponse
      */
     public function show(Product $product)
     {
-        return new ProductResource($product);
+        return $this->view(new ProductResource($product), Response::HTTP_OK);
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param \App\Models\Product $product
-     *
-     * @return void
-     */
-    public function edit(Product $product)
-    {
-        //
-    }
 
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request $request
-     * @param \App\Models\Product       $product
+     * @param \Illuminate\Http\Request $request
+     * @param \App\Models\Product $product
      *
-     * @return \Illuminate\Http\Response
-     * @throws \App\Exceptions\ProductNotBelongsToUser
-     *
+     * @return \Illuminate\Http\JsonResponse
+     * @throws NotBelongsToUser
      * @OA\Put(
      *      path="/products/{id}",
      *      tags={"Product"},
@@ -195,23 +184,21 @@ class ProductController extends BaseApiController
     public function update(Request $request, Product $product)
     {
         $this->ProductUserCheck($product);
-        if( $request->description){
+        if ($request->description) {
             $request['detail'] = $request->description;
         }
 
         unset($request['description']);
         $product->update($request->all());
-        return response([
-            'data' => new ProductResource($product)
-        ],Response::HTTP_OK);
+        return $this->view(new ProductResource($product), Response::HTTP_OK);
     }
 
     /**
      * Remove the specified resource from storage.
      *
      * @param $id
-     * @return \Illuminate\Http\Response
-     * @throws ProductNotBelongsToUser
+     * @return \Illuminate\Contracts\Routing\ResponseFactory|\Illuminate\Http\JsonResponse|\Illuminate\Http\Response
+     * @throws NotBelongsToUser
      * @OA\Delete(path="/products/{product}",
      *   tags={"Product"},
      *   summary="Delete product",
@@ -235,21 +222,25 @@ class ProductController extends BaseApiController
      */
     public function destroy($id)
     {
-        $product=Product::find($id);
-        if($product!=null){
+        $product = Product::find($id);
+        if ($product != null) {
             $this->ProductUserCheck($product);
             $product->delete();
-            return response(['data'=>"Product with id ".$id." was successfully deleted"],Response::HTTP_OK);
-        }else{
-            return response()
-                ->json(['error' => 'Product with ID '.$id." was not found"]);
+            return $this->view("Product with id " . $id . " was successfully deleted", Response::HTTP_OK);
+        } else {
+            return $this->errorView('page_not_found', Response::HTTP_NOT_FOUND);
         }
 
     }
+
+    /**
+     * @param $product
+     * @throws NotBelongsToUser
+     */
     public function ProductUserCheck($product)
     {
         if (Auth::id() !== $product->user_id) {
-            throw new ProductNotBelongsToUser;
+            throw new NotBelongsToUser("Product does not belong to currently authorized user");
         }
     }
 }

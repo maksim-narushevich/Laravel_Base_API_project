@@ -2,13 +2,13 @@
 
 namespace App;
 
+use App\Models\Image;
+use App\Models\Product;
+use App\Models\Review;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Laravel\Passport\HasApiTokens;
-
-
-
 
 
 class User extends Authenticatable
@@ -21,7 +21,7 @@ class User extends Authenticatable
      * @var array
      */
     protected $fillable = [
-        'name', 'email', 'password',
+        'name', 'email', 'password','enabled','confirmation_token'
     ];
 
     /**
@@ -42,4 +42,18 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
     ];
 
+    public function products()
+    {
+        return $this->hasMany(Product::class);
+    }
+
+    public function reviews()
+    {
+        return $this->hasMany(Review::class);
+    }
+
+    public function images()
+    {
+        return $this->hasMany(Image::class);
+    }
 }

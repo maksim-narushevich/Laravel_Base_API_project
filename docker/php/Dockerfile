@@ -12,10 +12,10 @@ RUN apt-get install -y \
             zip \
             && docker-php-ext-configure zip --with-libzip \
             && printf "\n" | pecl install redis \
-            && docker-php-ext-install -j$(nproc) pdo_mysql zip mysqli \
-            && docker-php-ext-enable redis \
-            && pecl install xdebug \
-            && docker-php-ext-enable xdebug
+            && docker-php-ext-install -j$(nproc) pdo_mysql zip mysqli bcmath sockets\
+            && docker-php-ext-enable redis
+#            && pecl install xdebug \
+#            && docker-php-ext-enable xdebug
 
 # Install composer
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
