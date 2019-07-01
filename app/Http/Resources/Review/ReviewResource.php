@@ -16,7 +16,9 @@ class ReviewResource extends JsonResource
     {
         return [
             'id' => $this->id,
-            'customer' => $this->customer,
+            'product_name' => $this->product->name,
+            'user_id' => $this->user->id,
+            'username' => $this->user->name,
             'text' => $this->review,
             'star' =>!empty( $this->star)? $this->star:"No rating"
         ];

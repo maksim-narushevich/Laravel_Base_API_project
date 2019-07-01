@@ -1,13 +1,14 @@
 <?php
+
 namespace App\Http\Controllers\Api;
-use App\Mail\RegistrationSuccessful;
+
+use App\Http\Requests\UserRequest;
 use App\Services\Mailer;
+use App\Services\TokenGenerator;
 use Illuminate\Http\Request;
-use App\Http\Controllers\Controller;
 use App\User;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Mail;
-use Illuminate\Support\Facades\Validator;
+use Symfony\Component\HttpFoundation\Response;
 
 
 /**
@@ -23,8 +24,7 @@ use Illuminate\Support\Facades\Validator;
  *         url="http://www.apache.org/licenses/LICENSE-2.0.html"
  *     )
  * )
-
- *  @OA\Server(
+ * @OA\Server(
  *      url="/api/v1",
  *      description="API documentation"
  * )
@@ -43,15 +43,12 @@ use Illuminate\Support\Facades\Validator;
  *     bearerFormat="JWT",
  * )
  */
-
 class AuthController extends BaseApiController
 {
-    public $successStatus = 200;
-
     /**
      * @OA\Post(
      *      path="/register",
-     *      tags={"User"},
+     *      tags={"Auth"},
      *     operationId="addUser",
      *     description="Create a new user.",
      *     summary="Register new user and return JWT token",
@@ -67,22 +64,20 @@ class AuthController extends BaseApiController
      *        @OA\Schema(ref="#/components/schemas/Error")
      *    )
      * )
+     * @param UserRequest $request
+     * @return \Illuminate\Http\JsonResponse
      */
-    public function register(Request $request) {
-        $validator = Validator::make($request->all(), [
-            'name' => 'required',
-            'email' => 'required|email',
-            'password' => 'required',
-            'c_password' => 'required|same:password',
-        ]);
-        if ($validator->fails()) {
-            return response()->json(['error'=>$validator->errors()], 401);                        }
+    public function register(UserRequest $request)
+    {
         $input = $request->all();
-        $input['password'] = bcrypt($input['password']);
+        $checkUser=User::where('email',$input['email'])->first();
+        if(is_null($checkUser)){
+            $input['password'] = bcrypt($input['password']);
+            $input['confirmation_token'] = TokenGenerator::generate();
 
-        $user = User::create($input);
+            $user = User::create($input);
 
-        //TODO Temporarily deactivate email sending
+            //TODO Temporarily deactivate email sending
 //        //-- Get current environment in order prevent sending email in 'test' mode
 //        $env = app()->environment();
 //        //-- Send email after successful registration
@@ -91,16 +86,60 @@ class AuthController extends BaseApiController
 //            $emailData['user']=$user;
 //            Mailer::sendSuccessRegistrationMail($emailData);
 //        }
+            return $this->view('successfully_registered', Response::HTTP_OK);
+        }else{
+            return $this->errorView('such_email_already_registered', Response::HTTP_BAD_REQUEST);
+        }
 
-        $success['token'] =  $user->createToken('AppName')->accessToken;
-        return response()->json(['success'=>$success], $this->successStatus);
+    }
+
+    /**
+     * @OA\Post(
+     *      path="/confirm",
+     *      tags={"Auth"},
+     *      summary="Confirm registration",
+     *      description="Returns successful confirmation information",
+     *     @OA\RequestBody(
+     *         description="Confirmation token",
+     *         required=true,
+     *         @OA\JsonContent(
+     *          required={"token"},
+     *          @OA\Property(property="token", type="string"),
+     *          ),
+     *      ),
+     *      @OA\Response(
+     *          response=200,
+     *          description="successful operation"
+     *       ),
+     *      @OA\Response(response=400, description="Bad request"),
+     *      @OA\Response(response=404, description="Resource Not Found"),
+     * )
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function confirm(Request $request)
+    {
+        $token = $request->get('token');
+        if (!is_null($token)) {
+            $user = User::where(['confirmation_token' => $token])->first();
+            if (!is_null($user)) {
+                $user->enabled = true;
+                $user->confirmation_token = "";
+                $user->update();
+                return $this->view('successfully_confirmed', Response::HTTP_OK);
+            } else {
+                return $this->errorView('confirmation_token_not_found', Response::HTTP_NOT_FOUND);
+            }
+        } else {
+            return $this->errorView('confirmation_token_not_provided', Response::HTTP_BAD_REQUEST);
+        }
     }
 
 
     /**
      * @OA\Post(
      *      path="/login",
-     *      tags={"User"},
+     *      tags={"Auth"},
      *     operationId="loginUser",
      *     description="Login user.",
      *     summary="Login with existing user and obtain JWT token",
@@ -117,83 +156,18 @@ class AuthController extends BaseApiController
      *    )
      * )
      */
-    public function login(){
-        if(Auth::attempt(['email' => request('email'), 'password' => request('password')])){
+    public function login()
+    {
+        if (Auth::attempt(['email' => request('email'), 'password' => request('password')])) {
             $user = Auth::user();
-            $success['token'] =  $user->createToken('AppName')-> accessToken;
-            return response()->json(['success' => $success], $this-> successStatus);
-        } else{
-            return response()->json(['error'=>'Unauthorised'], 401);
+            if ($user->enabled) {
+                $success['token'] = $user->createToken('AppName')->accessToken;
+                return $this->view($success, Response::HTTP_OK);
+            } else {
+                return $this->errorView('profile_not_enabled', Response::HTTP_UNAUTHORIZED);
+            }
+        } else {
+            return $this->errorView('bad_credentials', Response::HTTP_UNAUTHORIZED);
         }
-    }
-
-    /**
-     * @OA\Get(
-     *      path="/auth-user",
-     *      tags={"User"},
-     *      summary="Get authorized user details",
-     *      description="Returns logged user data",
-     *      @OA\Response(
-     *          response=200,
-     *          description="successful operation",
-     *          @OA\JsonContent(ref="#/components/schemas/UserItem"),
-     *       ),
-     *      @OA\Response(response=400, description="Bad request"),
-     *      @OA\Response(response=404, description="Resource Not Found"),
-     *     security={
-     *         {"bearerAuth": {}}
-     *     }
-     * )
-     */
-    public function getUser() {
-        $user = Auth::user();
-        return response()->json(['success' => $user], $this->successStatus);
-    }
-
-
-    /**
-     * @OA\Delete(
-     *      path="/user/delete/{id}",
-     *      tags={"User"},
-     *      summary="Delete user by ID",
-     *      description="Returns successful delete information",
-     *      @OA\Response(
-     *          response=200,
-     *          description="successful operation"
-     *       ),
-     *      @OA\Response(response=400, description="Bad request"),
-     *      @OA\Response(response=404, description="Resource Not Found"),
-     *     security={
-     *         {"bearerAuth": {}}
-     *     }
-     * )
-     */
-    public function deleteUser(User $user) {
-        $id=$user->id;
-        $user->delete();
-        return response()->json(['success' => 'User with ID '.$id.' was successfully deleted'], $this->successStatus);
-    }
-
-    /**
-     * @OA\Delete(
-     *      path="/auth-user/delete",
-     *      tags={"User"},
-     *      summary="Delete authorized user",
-     *      description="Returns successful delete information",
-     *      @OA\Response(
-     *          response=200,
-     *          description="successful operation"
-     *       ),
-     *      @OA\Response(response=400, description="Bad request"),
-     *      @OA\Response(response=404, description="Resource Not Found"),
-     *     security={
-     *         {"bearerAuth": {}}
-     *     }
-     * )
-     */
-    public function deleteAuthUser() {
-        $id=$user = Auth::id();
-        Auth::user()->delete();
-        return response()->json(['success' => 'User with ID '.$id.' was successfully deleted'], $this->successStatus);
     }
 }

@@ -2,8 +2,14 @@
 
 namespace App\Exceptions;
 
+use App\Http\Resources\Review\ReviewResource;
+use App\Utils\ErrorFormatter;
 use Exception;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
+use Illuminate\Validation\ValidationException;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 
 class Handler extends ExceptionHandler
 {
@@ -26,11 +32,13 @@ class Handler extends ExceptionHandler
         'password_confirmation',
     ];
 
+
     /**
      * Report or log an exception.
      *
-     * @param  \Exception  $exception
+     * @param \Exception $exception
      * @return void
+     * @throws Exception
      */
     public function report(Exception $exception)
     {
@@ -40,12 +48,63 @@ class Handler extends ExceptionHandler
     /**
      * Render an exception into an HTTP response.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \Exception  $exception
-     * @return \Illuminate\Http\Response
+     * @param \Illuminate\Http\Request $request
+     * @param \Exception $exception
+     * @return array|\Illuminate\Http\Response|\Symfony\Component\HttpFoundation\Response
      */
     public function render($request, Exception $exception)
     {
-        return parent::render($request, $exception);
+
+        if ($request->isJson() || $this->checkIfApiRequest($request)) {
+            return $this->handleApiException($exception, $request);
+        } else {
+            $res = parent::render($request, $exception);
+        }
+
+        return $res;
     }
+
+    /**
+     * @param Request $request
+     * @return bool
+     */
+    private function checkIfApiRequest(Request $request): bool
+    {
+        return (strpos($request->getRequestUri(), '/api/') !== false) ? true : false;
+    }
+
+
+    /**
+     * @param Exception $exception
+     * @param $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    private function handleApiException(Exception $exception, $request)
+    {
+        $data['exception']['code'] = $exception->getCode();
+        $class = get_class($exception);
+
+        $statusCode = null;
+        switch ($class) {
+            case NotBelongsToUser::class:
+                $data['label'] = "not_belongs_to_this_user";
+                $data['exception']['messages'] = $exception->getMessage();
+                break;
+            case ModelNotFoundException::class:
+                $data['label'] = "not_found";
+                $data['exception']['messages'] = $exception->getMessage();
+                break;
+            case ValidationException::class:
+                $data['label'] = "validation_failed";
+                $data['exception']['messages'] = $exception->validator->getMessageBag();
+                $statusCode = Response::HTTP_BAD_REQUEST;
+                break;
+            default:
+                $data['label'] = "bad_request";
+                $data['exception']['messages'] = $exception->getMessage();
+                $statusCode = Response::HTTP_BAD_REQUEST;
+        }
+        return ErrorFormatter::getErrorFormat($data, $statusCode);
+    }
+
 }

@@ -24,9 +24,17 @@ class ReviewRequest extends FormRequest
     public function rules()
     {
         return [
-            'customer' => 'required',
-            'star' => 'required|integer|between:0,5',
+            'star' => 'integer|between:0,5',
             'text' => 'required'
+        ];
+    }
+
+    public function messages()
+    {
+        return [
+            'text.required' => 'Text field is required',
+            'star.between' => 'Star field value must be between 0 and 5',
+            'star.integer' => 'Star field value must an integer value',
         ];
     }
 }

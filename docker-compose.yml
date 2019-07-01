@@ -1,6 +1,6 @@
 version: '3.7'
 services:
-    lara_app:
+    lara_app_api:
         build:
             context: ./
             dockerfile: ./docker/php/Dockerfile
@@ -13,9 +13,10 @@ services:
             - ./data/composer:/.composer
             - ./logs/laravel:/var/www/var/logs:cached
         depends_on:
-            - mysql
-            - redis
-    nginx:
+            - mysql_api
+            - redis_api
+            - rabbitmq_api
+    nginx_api:
         image: nginx:latest
         ports:
             - "8187:80"
@@ -27,14 +28,14 @@ services:
             - ./:/var/www
             - ./logs/nginx/:/var/log/nginx:cached
         depends_on:
-            - lara_app
-    redis:
+            - lara_app_api
+    redis_api:
         image: redis:latest
         networks:
           - docker-shared-services
         ports:
           - "6380:6379"
-    mysql:
+    mysql_api:
         image: mysql:5.7.21
         command: --init-file /data/app/init.sql
         container_name: laraapi_db
@@ -48,11 +49,24 @@ services:
         volumes:
             - ./data/mysql:/var/lib/mysql
             - ./docker/mysql/init.sql:/data/app/init.sql
-    mail:
+    mail_api:
         image: djfarrelly/maildev
         ports:
             - 25
             - 8127:80
+
+    rabbitmq_api:
+        image: rabbitmq:3-management
+        networks:
+            - docker-shared-services
+        environment:
+            RABBITMQ_ERLANG_COOKIE: "SWQOKODSQALRPCLNMEQG"
+            RABBITMQ_DEFAULT_USER: "guest"
+            RABBITMQ_DEFAULT_PASS: "guest"
+            RABBITMQ_DEFAULT_VHOST: "/"
+        ports:
+            - "15672:15672"
+            - "5672:5672"
 
 networks:
   docker-shared-services:

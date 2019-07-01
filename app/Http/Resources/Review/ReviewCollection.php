@@ -13,7 +13,9 @@ class ReviewCollection extends Resource
     public function toArray($request)
     {
         return [
-            'customer' => $this->customer,
+            'id' => $this->id,
+            'product_name' => $this->product->name,
+            'username' => $this->user->name,
             'text' => $this->review,
             'star' => $this->star,
             'href' => [

@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Services\Pagination\Paginator;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -13,7 +14,9 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        //
+        $this->app->bind(Paginator::class, function ($app) {
+            return new Paginator($app->config['paginator.max_per_page'],$app->config['paginator.use_paginator']);
+        });
     }
 
     /**
