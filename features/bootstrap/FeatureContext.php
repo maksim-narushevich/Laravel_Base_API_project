@@ -25,6 +25,7 @@ use App\User;
 use Behat\Behat\Hook\Scope\BeforeScenarioScope;
 use Behat\Behat\Hook\Scope\AfterScenarioScope;
 use Illuminate\Contracts\Console\Kernel;
+use GuzzleHttp\Psr7;
 
 /**
  * Defines application features from the specific context.
@@ -42,6 +43,7 @@ class FeatureContext extends ApiContext implements Context, SnippetAcceptingCont
      * @var string
      */
     private $token;
+
 
 //    /**
 //     * @var Response|null
@@ -115,7 +117,7 @@ class FeatureContext extends ApiContext implements Context, SnippetAcceptingCont
      */
     public function saveResponseToken()
     {
-        $this->token = $this->getResponseBody()->success->token;
+        $this->token = $this->getResponseBody()->data->token;
     }
 
     /**
@@ -147,10 +149,8 @@ class FeatureContext extends ApiContext implements Context, SnippetAcceptingCont
      */
     public function iDeleteUserWithEmailWithRequestToUsingHTTPDELETE($email, $path, $method)
     {
-        $user = User::where('email', $email)->firstOrFail();
-        if ($user === null) {
-            throw new \RuntimeException('User not found');
-        }
+        //Check if user exist or throw exception
+        $this->getUserByEmail($email);
 
         $this->setRequestPath($path);
         $this->request = $this->request->withMethod($method);
@@ -204,10 +204,10 @@ class FeatureContext extends ApiContext implements Context, SnippetAcceptingCont
     {
         if (Storage::disk('root')->exists('./' . $file)) {
 
-            if (Storage::disk('root')->exists('./.env')&& $env!=='restore_behat') {
+            if (Storage::disk('root')->exists('./.env') && $env !== 'restore_behat') {
                 //-- Set temporary environment file & remove current one
                 Storage::disk('root')->move('.env', './.env.temp');
-            }else if ($env!=='restore_behat'){
+            } else if ($env !== 'restore_behat') {
                 Storage::disk('root')->copy('.env.dist', './.env.temp');
             }
 
@@ -245,7 +245,41 @@ class FeatureContext extends ApiContext implements Context, SnippetAcceptingCont
      */
     public function createTestDatabaseIfNotExist($db_name)
     {
-        Artisan::call('create:database '.$db_name);
+        Artisan::call('create:database ' . $db_name);
     }
+
+    /**
+     * @Given /^get confirmation token by email "([^"]*)"$/
+     * @param $email
+     */
+    public function getConfirmationTokenByEmail($email)
+    {
+        $user = $this->getUserByEmail($email);
+        $this->token = $user->confirmation_token;
+    }
+
+    /**
+     * @param $email
+     * @return User
+     */
+    private function getUserByEmail($email): User
+    {
+        $user = User::where('email', $email)->firstOrFail();
+        if ($user === null) {
+            throw new \RuntimeException('User not found');
+        }
+        return $user;
+    }
+
+    /**
+     * @Given /^set token in request body$/
+     */
+    public function setTokenInRequestBody()
+    {
+        $body=array("token"=>$this->token);
+        $this->request = $this->request->withBody(Psr7\stream_for(json_encode($body)));
+        return $this;
+    }
+
 
 }

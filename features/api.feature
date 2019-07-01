@@ -38,6 +38,17 @@ Feature: REST API Tests
     Then the response code is 200
 
 
+  @api_confirm
+  @api
+  @api_circleci
+  Scenario: Confirm (activate) user's account
+    Given the "Content-Type" request header is "application/json"
+    Given get confirmation token by email "test@gmail.com"
+    Given set token in request body
+    When I request "/api/v1/confirm" using HTTP POST
+    Then the response code is 200
+
+
   @api_login
   @api
   @api_circleci
@@ -64,7 +75,7 @@ Feature: REST API Tests
     Then the response code is 200
     Then the response body matches:
     """
-    /success/
+    /data/
     """
 
   @api_delete
