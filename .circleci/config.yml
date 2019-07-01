@@ -88,7 +88,7 @@ jobs:
       - checkout
       - run:
           name: Install required PHP extensions
-          command: sudo docker-php-ext-install -j$(nproc) pdo_mysql zip mysqli
+          command: sudo docker-php-ext-install -j$(nproc) pdo_mysql zip mysqli bcmath sockets
       - composer-selfupdate
       - install-composer
       - save-composer-cache
