@@ -33,7 +33,7 @@ class TestJob implements ShouldQueue
      */
     public function handle()
     {
-        $this->product->detail="test detail from queue";
+        $this->product->detail="555 test detail from queue";
         $this->product->save();
     }
 }

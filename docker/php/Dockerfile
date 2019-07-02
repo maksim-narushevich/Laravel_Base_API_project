@@ -10,6 +10,7 @@ RUN apt-get install -y \
             expect \
             nano \
             zip \
+            supervisor \
             && docker-php-ext-configure zip --with-libzip \
             && printf "\n" | pecl install redis \
             && docker-php-ext-install -j$(nproc) pdo_mysql zip mysqli bcmath sockets\
@@ -23,13 +24,30 @@ RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local
 # Install plugin for parallel packages installation
 RUN php /usr/local/bin/composer global require hirak/prestissimo
 
-# ADD php.ini /usr/local/etc/php/conf.d/40-custom.ini
-
 # Set working directory PHP
 WORKDIR /var/www
 
 # copy files to image
 COPY . /var/www
+
+#######################
+# Configure Supervisor
+#######################
+# Create Supervisor group
+RUN groupadd supervisor
+# Add user to Supervisor group
+RUN usermod -a -G supervisor root
+COPY ./docker/supervisor/supervisord.conf /etc/supervisor
+COPY ./docker/supervisor/* /etc/supervisor/conf.d/
+# Set Supervisor environment
+RUN cd /var/www && mkdir -p logs/supevisor
+RUN service supervisor restart
+RUN touch /var/run/supervisor.sock
+RUN chmod 777 /var/run/supervisor.sock
+### In order to Start Supervisor run:
+### ./services/start_supervisor.sh
+#######################
+
 
 # copy nginx config to image
 COPY ./docker/nginx/hosts/. /etc/nginx/conf.d
@@ -38,3 +56,4 @@ COPY ./docker/nginx/hosts/. /etc/nginx/conf.d
 
 # Run PHP-FPM server
 CMD ["php-fpm"]
+
