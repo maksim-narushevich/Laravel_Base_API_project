@@ -11,11 +11,12 @@ class RebbitMQController extends Controller
 {
 
 
-    protected function dispatch()
+    protected function dispatchJob()
     {
         $product=Product::findOrFail(10);
         //dispatch test job
         TestJob::dispatch($product);
+        dd("test");
     }
 
 }

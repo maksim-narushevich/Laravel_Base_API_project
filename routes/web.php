@@ -28,6 +28,6 @@ Route::get('/aws/s3', 'AWSController@bucket');
 Route::get('/email/send', 'MailController@send');
 
 //RabbitMQ
-Route::get('/queue/dispatch', 'RebbitMQController@dispatch');
+Route::get('/queue/dispatchJob', 'RebbitMQController@dispatch');
 
 
