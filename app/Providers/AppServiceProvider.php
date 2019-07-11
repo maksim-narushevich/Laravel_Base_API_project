@@ -32,6 +32,10 @@ class AppServiceProvider extends ServiceProvider
             ];
             return new LoggerService($arrLogger);
         });
+
+        if ($this->app->isLocal()) {
+            $this->app->register(TelescopeServiceProvider::class);
+        }
     }
 
     /**

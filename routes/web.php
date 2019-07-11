@@ -32,3 +32,4 @@ Route::get('/queue/dispatch', 'RabbitMQController@dispatchJob');
 Route::post('/test-service', 'RabbitMQController@testService')->name('test-microservice');
 
 
+
