@@ -48,7 +48,7 @@ class RabbitMQController extends Controller
         $channel->close();
         $connection->close();
 
-        dd(' [x] Sent ', $routing_key, ':', $data, "\n");
+        dd(' [x] Sent routing key:', $routing_key, ':', $data, "\n");
     }
 
 }
