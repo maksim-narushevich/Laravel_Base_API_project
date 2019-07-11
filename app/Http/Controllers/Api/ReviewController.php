@@ -15,16 +15,13 @@ use Symfony\Component\HttpFoundation\Response;
 
 class ReviewController extends BaseApiController
 {
-    public function __construct()
-    {
-        $this->middleware('auth:api');
-    }
-
     /**
      * Display a listing of the resource.
      *
+     * @param Product $product
      * @param Request $request
      *
+     * @return \Illuminate\Http\JsonResponse|\Illuminate\Http\Resources\Json\AnonymousResourceCollection
      * @OA\Get(
      *      path="/products/{id}/reviews",
      *      operationId="getProductReviews",
@@ -42,7 +39,6 @@ class ReviewController extends BaseApiController
      *         {"bearerAuth": {}}
      *     }
      * )
-     * @return \Illuminate\Http\JsonResponse|\Illuminate\Http\Resources\Json\AnonymousResourceCollection
      */
     public function index(Product $product, Request $request)
     {

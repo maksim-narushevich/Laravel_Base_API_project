@@ -7,11 +7,39 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Models\Product;
 use App\Models\Review;
+use App\Services\Logging\LoggerInterface;
+use App\Services\Logging\LoggerService;
 use App\Utils\ErrorFormatter;
 use Illuminate\Http\Request;
 
 class BaseApiController extends Controller
 {
+
+    /**
+     * @var LoggerService
+     */
+    private $loggerService;
+
+    public function __construct(LoggerService $loggerService){
+        $this->loggerService = $loggerService;
+    }
+
+    /**
+     * Get Logger Instance
+     */
+    protected function getLogger():LoggerInterface{
+        return $this->loggerService->getService();
+    }
+
+
+    // EXAMPLE OF SENDING LOG
+    // (SEPARATE MICROSERVICE INSTANCE)
+    // #######################################
+    //public function testLogging(){
+    //    $this->getLogger()->sendLog(['code'=>501,'message'=>'Internal server error']);
+    //dd("Log successfully sent!");
+    //}
+
     /**
      * @param mixed $data
      * @param null $statusCode
