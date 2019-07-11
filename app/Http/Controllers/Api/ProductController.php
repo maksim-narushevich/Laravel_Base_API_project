@@ -13,11 +13,6 @@ use Symfony\Component\HttpFoundation\Response;
 
 class ProductController extends BaseApiController
 {
-    public function __construct()
-    {
-        $this->middleware('auth:api');
-    }
-
     /**
      * Display a listing of the resource.
      *
