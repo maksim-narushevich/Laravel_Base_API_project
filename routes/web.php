@@ -28,6 +28,7 @@ Route::get('/aws/s3', 'AWSController@bucket');
 Route::get('/email/send', 'MailController@send');
 
 //RabbitMQ
-Route::get('/queue/dispatch', 'RebbitMQController@dispatch');
+Route::get('/queue/dispatch', 'RabbitMQController@dispatchJob');
+Route::post('/test-service', 'RabbitMQController@testService')->name('test-microservice');
 
 
