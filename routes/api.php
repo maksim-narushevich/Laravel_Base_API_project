@@ -10,7 +10,7 @@ Route::prefix('v1')->group(function(){
     Route::group(['middleware' => 'auth:api'], function(){
         Route::get('auth-user', 'Api\UserController@getUser');
         Route::get('users', 'Api\UserController@getUserList');
-        Route::get('users/{user}', 'Api\UserController@getUserByID');
+        Route::get('users/{user}', 'Api\UserController@getUserByID')->name('user');
         Route::put('users/{user}', 'Api\UserController@updateUserByID');
         Route::delete('auth-user/delete', 'Api\UserController@deleteAuthUser');
         Route::delete('users/{user}', 'Api\UserController@deleteUser');

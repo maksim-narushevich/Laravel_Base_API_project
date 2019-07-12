@@ -20,7 +20,7 @@ class UserResource extends JsonResource
             'name'=>$this->name,
             'email'=>$this->email,
             'registered'=>$this->created_at,
-            'media'=>!empty($this->getMedia('user_images'))?new MediaCollection($this->getMedia('user_images')):[],
+            'media'=>!empty($this->getMedia('user_images')->all())?new MediaCollection($this->getMedia('user_images')):null,
         ];
     }
 }

@@ -9,6 +9,7 @@ use App\Models\Product;
 use App\Models\Review;
 use App\Services\Logging\LoggerInterface;
 use App\Services\Logging\LoggerService;
+use App\User;
 use App\Utils\ErrorFormatter;
 use Illuminate\Http\Request;
 
@@ -80,11 +81,13 @@ class BaseApiController extends Controller
     {
         $orderBy = $request->get("order_by") ?? "id";
         $sortBy = (in_array(strtoupper($request->get("sort_by")), ["ASC", "DESC"])) ? $request->get("sort_by") : "ASC";
-        if (in_array($type, ['product','review'])) {
+        if (in_array($type, ['product','review','user'])) {
             if($type==='review'){
                 $collection =Review::where('product_id',$arrParams['product_id'])->orderBy($orderBy, $sortBy);
-            }else{
+            }elseif($type==='product'){
                 $collection = Product::where("id", "!=", 0)->orderBy($orderBy, $sortBy);
+            }else{
+                $collection = User::where("id", "!=", 0)->orderBy($orderBy, $sortBy);
             }
             return $collection->paginate($request->get("limit") ?? config('paginator.max_per_page'));
         } else {
