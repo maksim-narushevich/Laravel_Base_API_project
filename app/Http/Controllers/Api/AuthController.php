@@ -146,7 +146,7 @@ class AuthController extends BaseApiController
      *     @OA\RequestBody(
      *         description="Authorize user and get token",
      *          required=true,
-     *         @OA\JsonContent(ref="#/components/schemas/User")
+     *         @OA\JsonContent(ref="#/components/schemas/Login")
      *     ),
      *    @OA\Response(response=201, description="Null response"),
      *    @OA\Response(
@@ -158,7 +158,7 @@ class AuthController extends BaseApiController
      */
     public function login()
     {
-        if (Auth::attempt(['email' => request('email'), 'password' => request('password')])) {
+        if (Auth::attempt(['email' => request('login'), 'password' => request('password')])) {
             $user = Auth::user();
             if ($user->enabled) {
                 $success['token'] = $user->createToken('AppName')->accessToken;

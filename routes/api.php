@@ -18,6 +18,8 @@ Route::prefix('v1')->group(function(){
 
         Route::post('services/sms', 'Api\ServicesController@sendSMS');
         Route::post('services/image/upload', 'Api\ServicesController@imageUpload');
+        Route::post('services/image/upload-with-resizing', 'Api\ServicesController@imageUploadWithResizing');
+        Route::get('services/image/get', 'Api\ServicesController@getImage');
 
         Route::apiResource('/products',"Api\ProductController");
         Route::group(['prefix'=>'products'],function (){

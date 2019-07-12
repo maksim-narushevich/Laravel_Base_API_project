@@ -49,3 +49,17 @@ class User
  *   }
  * )
  */
+
+/**
+ *  @OA\Schema(
+ *   schema="Login",
+ *   type="object",
+ *   allOf={
+ *       @OA\Schema(
+ *           required={"login","password"},
+ *           @OA\Property(property="login", type="string"),
+ *           @OA\Property(property="password",  type="string")
+ *       )
+ *   }
+ * )
+ */
