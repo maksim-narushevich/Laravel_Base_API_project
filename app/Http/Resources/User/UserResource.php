@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources\User;
 
+use App\Http\Resources\Media\MediaCollection;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class UserResource extends JsonResource
@@ -19,6 +20,7 @@ class UserResource extends JsonResource
             'name'=>$this->name,
             'email'=>$this->email,
             'registered'=>$this->created_at,
+            'media'=>!empty($this->getMedia('user_images'))?new MediaCollection($this->getMedia('user_images')):[],
         ];
     }
 }

@@ -209,6 +209,9 @@ class ServicesController extends BaseApiController
 
         $user=Auth::user();
         //dd($user->getFirstMediaUrl('user_images'));
-        dd($user->getMedia('user_images'));
+        //dd($user->getMedia('user_images')[0]->getUrl('thumb'));
+
+        //### Delete media
+        //dd($user->getMedia('user_images')[0]->delete());
     }
 }
