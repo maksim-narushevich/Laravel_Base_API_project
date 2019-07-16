@@ -29,7 +29,7 @@ class AppServiceProvider extends ServiceProvider
                 "port"=>$app->config['queue.rabbitmq.port']??"",
                 "login"=>$app->config['queue.rabbitmq.login']??"",
                 "password"=>$app->config['queue.rabbitmq.password']??"",
-                "type"=>$app->config['logger.type']??"",
+                "type"=>$app->config['logging.type']??"",
             ];
             return new LoggerService($arrLogger);
         });
