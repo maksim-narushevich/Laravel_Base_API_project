@@ -70,10 +70,10 @@ class AuthController extends BaseApiController
     public function register(UserRequest $request)
     {
         $input = $request->all();
-        $checkUser=User::where('email',$input['email'])->first();
-        if(is_null($checkUser)){
+        $checkUser = User::where('email', $input['email'])->first();
+        if (is_null($checkUser)) {
             $input['password'] = bcrypt($input['password']);
-            $tokenGeneratorType=!empty(config('serverless.ibm_token'))?"ibm":"local";
+            $tokenGeneratorType = !empty(config('serverless.ibm_token')) ? "ibm" : "local";
             $input['confirmation_token'] = TokenGenerator::generate($tokenGeneratorType);
 
             $user = User::create($input);
@@ -88,7 +88,7 @@ class AuthController extends BaseApiController
 //            Mailer::sendSuccessRegistrationMail($emailData);
 //        }
             return $this->view('successfully_registered', Response::HTTP_OK);
-        }else{
+        } else {
             return $this->errorView('such_email_already_registered', Response::HTTP_BAD_REQUEST);
         }
 
@@ -167,6 +167,10 @@ class AuthController extends BaseApiController
             } else {
                 return $this->errorView('profile_not_enabled', Response::HTTP_UNAUTHORIZED);
             }
+        } elseif (!request('login')) {
+            return $this->errorView('login_must_be_provided', Response::HTTP_BAD_REQUEST);
+        } elseif (!request('password')) {
+            return $this->errorView('password_must_be_provided', Response::HTTP_BAD_REQUEST);
         } else {
             return $this->errorView('bad_credentials', Response::HTTP_UNAUTHORIZED);
         }

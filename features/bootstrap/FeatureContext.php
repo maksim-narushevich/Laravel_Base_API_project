@@ -245,7 +245,7 @@ class FeatureContext extends ApiContext implements Context, SnippetAcceptingCont
      */
     public function createTestDatabaseIfNotExist($db_name)
     {
-        Artisan::call('create:database ' . $db_name);
+            Artisan::call('create:database ' . $db_name);
     }
 
     /**
