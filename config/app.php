@@ -15,6 +15,9 @@ return [
 
     'name' => env('APP_NAME', 'Laravel'),
 
+    // Default service name for microservices AMQP interaction
+    'service_name' => env('APP_SERVICE_NAME', 'base_api'),
+
     /*
     |--------------------------------------------------------------------------
     | Application Environment

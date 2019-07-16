@@ -2,6 +2,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Requests\UserRequest;
+use App\Http\Resources\User\UserCollection;
 use App\Http\Resources\User\UserResource;
 use App\Services\Pagination\Paginator;
 use Illuminate\Http\Request;
@@ -56,11 +57,20 @@ class UserController extends BaseApiController
      * )
      * @param Request $request
      * @param Paginator $paginator
-     * @return \Illuminate\Http\JsonResponse
+     * @return \Illuminate\Http\JsonResponse|\Illuminate\Http\Resources\Json\AnonymousResourceCollection
      */
     public function getUserList(Request $request, Paginator $paginator)
     {
-        return $this->view($paginator->paginate(User::all()->toArray(),$request),Response::HTTP_OK);
+        $usersPg = $this->getSortedCollectionData($request, 'user');
+        if (!empty($usersPg)) {
+            if ($usersPg->currentPage() <= $usersPg->lastPage()) {
+                return UserCollection::collection($usersPg);
+            } else {
+                return $this->errorView('page_not_found', Response::HTTP_NOT_FOUND);
+            }
+        }else{
+            return $this->errorView('products_not_found', Response::HTTP_NOT_FOUND);
+        }
     }
 
     /**
