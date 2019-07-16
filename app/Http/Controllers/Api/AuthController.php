@@ -73,7 +73,7 @@ class AuthController extends BaseApiController
         $checkUser=User::where('email',$input['email'])->first();
         if(is_null($checkUser)){
             $input['password'] = bcrypt($input['password']);
-            $input['confirmation_token'] = TokenGenerator::generate();
+            $input['confirmation_token'] = TokenGenerator::generate("ibm");
 
             $user = User::create($input);
 
