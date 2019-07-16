@@ -6,14 +6,16 @@ use App\Models\Image;
 use App\Models\Product;
 use App\Models\Review;
 use Illuminate\Notifications\Notifiable;
-use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Laravel\Passport\HasApiTokens;
+use Spatie\MediaLibrary\HasMedia\HasMedia;
+use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
+use Spatie\MediaLibrary\Models\Media;
 
 
-class User extends Authenticatable
+class User extends Authenticatable implements HasMedia
 {
-    use Notifiable,HasApiTokens;
+    use Notifiable,HasApiTokens, HasMediaTrait;
 
     /**
      * The attributes that are mass assignable.
@@ -56,4 +58,18 @@ class User extends Authenticatable
     {
         return $this->hasMany(Image::class);
     }
+
+    public function registerMediaConversions(Media $media = null)
+    {
+        $this->addMediaConversion('thumb')
+            ->width(200)
+            ->height(200)
+            ->sharpen(10);
+
+        $this->addMediaConversion('square')
+            ->width(412)
+            ->height(412)
+            ->sharpen(10);
+    }
+
 }

@@ -102,7 +102,7 @@
                     "content": {
                         "application/json": {
                             "schema": {
-                                "$ref": "#/components/schemas/User"
+                                "$ref": "#/components/schemas/Login"
                             }
                         }
                     }
@@ -572,18 +572,60 @@
                     "description": "Upload image to provided storage (default local)",
                     "required": true,
                     "content": {
-                        "application/json": {
+                        "multipart/form-data": {
                             "schema": {
                                 "required": [
-                                    "number",
-                                    "message"
+                                    "image"
                                 ],
                                 "properties": {
-                                    "number": {
-                                        "type": "string"
-                                    },
-                                    "message": {
-                                        "type": "string"
+                                    "image": {
+                                        "description": "Media to upload",
+                                        "type": "string",
+                                        "format": "binary"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    },
+                    "400": {
+                        "description": "Bad request"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/services/image/upload-with-resizing": {
+            "post": {
+                "tags": [
+                    "Services"
+                ],
+                "summary": "Image uploader service with resizing",
+                "description": "Returns successful information",
+                "operationId": "App\\Http\\Controllers\\Api\\ServicesController::imageUploadWithResizing",
+                "requestBody": {
+                    "description": "Upload image to provided storage (default local)",
+                    "required": true,
+                    "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "required": [
+                                    "image"
+                                ],
+                                "properties": {
+                                    "image": {
+                                        "description": "Media to upload",
+                                        "type": "string",
+                                        "format": "binary"
                                     }
                                 },
                                 "type": "object"
@@ -988,6 +1030,26 @@
                             "updated_at": {
                                 "type": "string",
                                 "format": "date"
+                            }
+                        },
+                        "type": "object"
+                    }
+                ]
+            },
+            "Login": {
+                "type": "object",
+                "allOf": [
+                    {
+                        "required": [
+                            "login",
+                            "password"
+                        ],
+                        "properties": {
+                            "login": {
+                                "type": "string"
+                            },
+                            "password": {
+                                "type": "string"
                             }
                         },
                         "type": "object"

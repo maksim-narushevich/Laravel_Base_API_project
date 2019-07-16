@@ -1,5 +1,7 @@
 <?php
 
+use Illuminate\Support\Facades\Auth;
+
 return [
 
     /*
@@ -67,6 +69,13 @@ return [
             'region' => env('AWS_DEFAULT_REGION'),
             'bucket' => env('AWS_BUCKET'),
             'url' => env('AWS_URL'),
+        ],
+
+        'media' => [
+            'driver' => 'local',
+            'root' => storage_path('app/public/upload/media'),
+            'url' => env('APP_URL').'/storage/upload/media',
+            'visibility' => 'public',
         ],
 
     ],

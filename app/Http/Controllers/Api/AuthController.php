@@ -73,7 +73,8 @@ class AuthController extends BaseApiController
         $checkUser=User::where('email',$input['email'])->first();
         if(is_null($checkUser)){
             $input['password'] = bcrypt($input['password']);
-            $input['confirmation_token'] = TokenGenerator::generate();
+            $tokenGeneratorType=!empty(config('serverless.ibm_token'))?"ibm":"local";
+            $input['confirmation_token'] = TokenGenerator::generate($tokenGeneratorType);
 
             $user = User::create($input);
 
@@ -146,7 +147,7 @@ class AuthController extends BaseApiController
      *     @OA\RequestBody(
      *         description="Authorize user and get token",
      *          required=true,
-     *         @OA\JsonContent(ref="#/components/schemas/User")
+     *         @OA\JsonContent(ref="#/components/schemas/Login")
      *     ),
      *    @OA\Response(response=201, description="Null response"),
      *    @OA\Response(
@@ -158,7 +159,7 @@ class AuthController extends BaseApiController
      */
     public function login()
     {
-        if (Auth::attempt(['email' => request('email'), 'password' => request('password')])) {
+        if (Auth::attempt(['email' => request('login'), 'password' => request('password')])) {
             $user = Auth::user();
             if ($user->enabled) {
                 $success['token'] = $user->createToken('AppName')->accessToken;
