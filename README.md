@@ -1,7 +1,7 @@
 # Laravel Base API
 Scalable and reusable Laravel based API application
 
-####Apllication is based on [Microservices](https://microservices.io/) architecture
+### Apllication is based on [Microservices](https://microservices.io/) architecture
 
 
 - [How to install](https://github.com/Maksim1990/Laravel_Base_API_project/blob/master/public/docs/installation.md)
