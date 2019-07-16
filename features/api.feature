@@ -57,7 +57,7 @@ Feature: REST API Tests
     Given the request body is:
     """
     {
-        "email": "test@gmail.com",
+        "login": "test@gmail.com",
         "password": "testqwerty9100Y"
     }
     """
@@ -86,7 +86,7 @@ Feature: REST API Tests
     Given the request body is:
     """
     {
-        "email": "test@gmail.com",
+        "login": "test@gmail.com",
         "password": "testqwerty9100Y"
     }
     """
