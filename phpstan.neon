@@ -6,3 +6,4 @@ parameters:
         - app
     excludes_analyse:
     	- routes
+    	- app/Serverless
