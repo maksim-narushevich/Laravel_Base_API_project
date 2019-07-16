@@ -11,7 +11,11 @@ class TokenGenerator
 
     static public function generate($type="local"): string
     {
+
         if($type==="ibm"){
+            // ##################
+            // IBM CLOUD FUNCTION TRIGGERING
+            // ##################
             $apiToken=explode(":",config('serverless.ibm_token'));
             $httpClient=HttpClient::create([
                 'auth_basic' => [
@@ -24,7 +28,7 @@ class TokenGenerator
             ]);
             $response = $httpClient->request(
                 'POST',
-                'https://eu-gb.functions.cloud.ibm.com/api/v1/namespaces/narushevich.maksim%40gmail.com_dev/actions/php_base_api_generate_hash?blocking=true');
+                'https://eu-gb.functions.cloud.ibm.com/api/v1/namespaces/narushevich.maksim@gmail.com_dev/actions/php_base_api_generate_hash?blocking=true');
             $resp=json_decode($response->getContent());
             return $resp->response->result->token;
         }else{

@@ -4,69 +4,79 @@ namespace App\Services\Logging\Types;
 
 use App\Services\Logging\LoggerException;
 use App\Services\Logging\LoggerInterface;
-use Symfony\Component\HttpClient\HttpClient;
+use PhpAmqpLib\Connection\AMQPStreamConnection;
+use PhpAmqpLib\Message\AMQPMessage;
 
 
 class FluentdLogger implements LoggerInterface
 {
 
-    /** @var string */
-    private $username;
 
-    /** @var string */
-    private $password;
-
-    /** @var string */
-    private $url;
+    /** @var array
+     *  Required parameters that must be provided to initialize logging service
+     */
+    private $arrRequiredCredentials = ['host', 'port', 'login', 'password'];
 
     /** @var array */
-    private $arrRequiredCaredentails = ['user', 'password', 'url'];
-
-    private $httpClient;
+    private $params;
 
     public function __construct($params)
     {
         $this->validateLoggerCredentials($params);
-        $this->username = $params['user'];
-        $this->password = $params['password'];
-        $this->url = $params['url'];
-        $this->httpClient = HttpClient::create([
-            'headers' => [
-                'Content-Type' => 'application/json',
-            ]
-        ]);
     }
 
-    public function getToken()
-    {
-        $response = $this->httpClient->request('POST', $this->url . '/login', [
-            'json' => ['login' => $this->username, 'password' => $this->password],
-        ]);
 
-        if (isset($response->toArray()['token']) && !empty($response->toArray()['token'])) {
-            return $response->toArray()['token'];
+    /**
+     * @param array $logData
+     * @throws LoggerException
+     */
+    public function sendLog(array $logData)
+    {
+        if (!empty($logData) && is_array($logData)) {
+            $connection = new AMQPStreamConnection($this->params['host'], $this->params['port'], $this->params['login'], $this->params['password']);
+            $channel = $connection->channel();
+            $exchangeName = 'api_services';
+            $channel->exchange_declare($exchangeName, 'topic', false, true, false);
+            $routing_key = 'service.logging.log';
+
+            //Data to be sent
+            $data = [];
+            $log_time = date("Y-m-d h:i:s");
+            $service = config('app.service_name');
+
+            $data['service'] = $service;
+            $data['log_data'] = [
+                "service_name" => $service,
+                "log_time" => $log_time,
+            ];
+            $data['log_time'] = $log_time;
+            //ADD APP LOGGING DATA BEFORE SEND TO SERVICE
+            $data['log_data'] = array_merge($data['log_data'], $logData);
+
+            $msg = new AMQPMessage(json_encode($data));
+            $channel->basic_publish($msg, $exchangeName, $routing_key);
+            $channel->close();
+            $connection->close();
         } else {
-            throw new LoggerException("bad_logging_service_credentials");
+            throw new LoggerException("logging_service_must_be_non_empty_array");
         }
-
-    }
-
-    public function sendLog(array $data)
-    {
-        $response = $this->httpClient->request('POST', $this->url . '/log', [
-            'json' => $data,
-            'auth_bearer' => $this->getToken(),
-        ]);
-        return $response->getContent();
     }
 
 
+    /**
+     * @param array $credentials
+     * @throws LoggerException
+     */
     public function validateLoggerCredentials(array $credentials)
     {
         foreach ($credentials as $key => $val) {
-            if (in_array($key, $this->arrRequiredCaredentails) && empty($val)) {
+            if (in_array($key, $this->arrRequiredCredentials) && empty($val)) {
                 throw new LoggerException("logger_service_" . strtolower($key) . "_cant_be_empty");
+            } elseif (!in_array($key, $this->arrRequiredCredentials)) {
+                throw new LoggerException("logger_service_" . strtolower($key) . "_should_be_provided");
             }
         }
+        //Initialize logging service parameters
+        $this->params = $credentials;
     }
 }
