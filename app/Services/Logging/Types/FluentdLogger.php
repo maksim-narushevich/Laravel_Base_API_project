@@ -69,6 +69,10 @@ class FluentdLogger implements LoggerInterface
      */
     public function validateLoggerCredentials(array $credentials)
     {
+        //Remove 'type' from credentials array
+        if(isset($credentials['type'])){
+            unset($credentials['type']);
+        }
         foreach ($credentials as $key => $val) {
             if (in_array($key, $this->arrRequiredCredentials) && empty($val)) {
                 throw new LoggerException("logger_service_" . strtolower($key) . "_cant_be_empty");
