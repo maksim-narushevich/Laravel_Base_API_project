@@ -16,4 +16,5 @@ sed -e "s/\${APP_MYSQL_PASSWORD}/${DEV_SHARED_MYSQL_PASSWORD}/g;
          s/\${APP_AWS_DEFAULT_REGION}/${DEV_AWS_DEFAULT_REGION}/g;
          s/\${APP_AWS_BUCKET}/${DEV_AWS_BUCKET}/g;
          s/\${APP_MAILGUN_DOMAIN}/${DEV_MAILGUN_DOMAIN}/g;
+         s/\${IBM_SERVERLESS_TOKEN}/${IBM_SERVERLESS_TOKEN}/g;
          s/\${APP_MAILGUN_SECRET}/${DEV_MAILGUN_SECRET}/g;"  ./deploy/.env.dist.deploy > ./deploy/.env.dist
