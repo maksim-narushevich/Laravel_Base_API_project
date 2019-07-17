@@ -25,10 +25,10 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(LoggerService::class, function ($app) {
 
             $arrLogger=[
-                "host"=>$app->config['queue.rabbitmq.host']??"",
-                "port"=>$app->config['queue.rabbitmq.port']??"",
-                "login"=>$app->config['queue.rabbitmq.login']??"",
-                "password"=>$app->config['queue.rabbitmq.password']??"",
+                "host"=>$app->config['queue.connections.rabbitmq.host']??"",
+                "port"=>$app->config['queue.connections.rabbitmq.port']??"",
+                "login"=>$app->config['queue.connections.rabbitmq.login']??"",
+                "password"=>$app->config['queue.connections.rabbitmq.password']??"",
                 "type"=>$app->config['logging.type']??"",
             ];
             return new LoggerService($arrLogger);
