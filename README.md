@@ -25,6 +25,7 @@ Scalable and reusable Laravel based API application
 - **Queues/AMQP**: [RabbitMQ](https://www.rabbitmq.com/)
 - **Full-text searching**: [ElasticSearch](https://www.elastic.co/)
 - **Email/SMS**: Mailgun, AWS SNS/SQS
+- **Bug/error tracking**: [Sentry](https://sentry.io)
 ---
 
 ### Swagger documentation:

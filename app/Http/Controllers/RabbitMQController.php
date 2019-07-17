@@ -25,7 +25,7 @@ class RabbitMQController extends Controller
 
     protected function testService(Request $request)
     {
-        throw new Exception('My first Sentry error!');
+        throw new Exception('My second Sentry error!');
         dd("Run some test here");
     }
 
