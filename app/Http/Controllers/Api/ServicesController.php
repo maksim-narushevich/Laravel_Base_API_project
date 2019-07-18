@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Resources\Image\ImageResource;
 use App\Models\Image;
 use App\Models\Product;
-use App\Services\SMS\SMSFactory;
+use App\Services\SMS\SMSService;
 use App\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -41,11 +41,13 @@ class ServicesController extends BaseApiController
      *     }
      * )
      * @param Request $request
-     * @return array
-     * @throws \Illuminate\Validation\ValidationException
+     * @param SMSService $service
+     * @return \Illuminate\Http\JsonResponse
      * @throws \App\Services\SMS\ServiceException
+     * @throws \Illuminate\Validation\ValidationException
+     * @throws \App\Services\SMS\SMSException
      */
-    public function sendSMS(Request $request)
+    public function sendSMS(Request $request, SMSService $service)
     {
         //-- Validate input data
         $this->validate($request, [
@@ -59,18 +61,13 @@ class ServicesController extends BaseApiController
                 'message.required' => 'Message field is required',
             ]);
 
-        $sms=SMSFactory::getService("aws");
-        $response = $sms->publish([
-            'Message' => $request->get('message'),
-            'PhoneNumber' => $request->get('number'),
-            'MessageAttributes' => [
-                'AWS.SNS.SMS.SMSType' => [
-                    'DataType' => 'String',
-                    'StringValue' => 'Transactional',
-                ]
-            ],
+        $sms=$service->getService();
+        $response=$sms->sendSMS([
+            "message"=>$request->get('message'),
+            "number"=>$request->get('number'),
         ]);
-        dd($response);
+
+        return $this->view($response, Response::HTTP_OK);
     }
 
     /**
