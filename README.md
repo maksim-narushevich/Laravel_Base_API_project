@@ -39,3 +39,7 @@ Scalable and reusable Laravel based API application
 - [GOLANG LOGGING MICROSERVICE](https://github.com/Maksim1990/Golang_Logging_Microservice)
     - Triggered by RabbitMQ messages (binding key 'service.logging.*')
     - Golang, RabbitMQ
+ - [PYTHON FLASK NOTES MICROSERVICE](https://github.com/Maksim1990/Python_RESTFul_API_Service_App)
+    - Triggered by REST HTTP requests
+    - Python 3.7, Flask framework
+    - MySQL, MongoDB
