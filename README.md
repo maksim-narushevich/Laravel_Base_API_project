@@ -25,7 +25,21 @@ Scalable and reusable Laravel based API application
 - **Queues/AMQP**: [RabbitMQ](https://www.rabbitmq.com/)
 - **Full-text searching**: [ElasticSearch](https://www.elastic.co/)
 - **Email/SMS**: Mailgun, AWS SNS/SQS
+- **Bug/error tracking**: [Sentry](https://sentry.io)
 ---
 
 ### Swagger documentation:
 - [REST API DOCS](http://185.177.59.147:8187/api/doc)
+
+
+### Microservices:
+- [PYTHON AWS SMS MICROSERVICE](https://github.com/Maksim1990/python_microservice_ampq_aws-sms/tree/master)
+    - Triggered by RabbitMQ messages (binding key 'service.sms.*')
+    - Python 3.7, AWS SDK, RabbitMQ
+- [GOLANG LOGGING MICROSERVICE](https://github.com/Maksim1990/Golang_Logging_Microservice)
+    - Triggered by RabbitMQ messages (binding key 'service.logging.*')
+    - Golang, RabbitMQ
+ - [PYTHON FLASK NOTES MICROSERVICE](https://github.com/Maksim1990/Python_RESTFul_API_Service_App)
+    - Triggered by REST HTTP requests
+    - Python 3.7, Flask framework
+    - MySQL, MongoDB

@@ -24,7 +24,6 @@ class LoggerService
      */
     function getService(): LoggerInterface
     {
-
         switch ($this->params['type']) {
             case "fluentd":
                 return new FluentdLogger($this->params);

@@ -1,13 +1,14 @@
 <?php
-namespace App\Services\Logging\Types;
 
-use App\Services\Logging\LoggerException;
-use App\Services\Logging\LoggerInterface;
+namespace App\Services\SMS\Types\Microservices;
+
+use App\Services\SMS\SMSInterface;
 use App\Services\RabbitMQService;
+use App\Services\SMS\SMSException;
 
-class FluentdLogger implements LoggerInterface
+
+class SMSAdapter implements SMSInterface
 {
-
 
     /** @var array */
     private $params;
@@ -20,38 +21,40 @@ class FluentdLogger implements LoggerInterface
 
 
     /**
-     * @param array $logData
-     * @throws LoggerException
+     * @param array $smsData
+     * @return array
+     * @throws SMSException
      */
-    public function sendLog(array $logData)
+    public function sendSMS(array $smsData)
     {
-        if (!empty($logData) && is_array($logData)) {
+        if (!empty($smsData) && is_array($smsData)) {
             $connection = RabbitMQService::getAMQPStreamConnection($this->params);
             $channel = $connection->channel();
             $exchangeName = 'api_services';
             $channel->exchange_declare($exchangeName, 'topic', false, true, false);
-            $routing_key = 'service.logging.log';
+            $routing_key = 'service.sms.send';
 
             //Data to be sent
             $data = [];
-            $log_time = date("Y-m-d h:i:s");
+            $time = date("Y-m-d h:i:s");
             $service = config('app.service_name');
 
             $data['service'] = $service;
-            $data['log_data'] = [
+            $data['data'] = [
                 "service_name" => $service,
-                "log_time" => $log_time,
+                "send_time" => $time,
             ];
-            $data['log_time'] = $log_time;
+            $data['send_time'] = $time;
             //ADD APP LOGGING DATA BEFORE SEND TO SERVICE
-            $data['log_data'] = array_merge($data['log_data'], $logData);
+            $data['data'] = array_merge($data['data'], $smsData);
 
             $msg = RabbitMQService::getAMQPMessage($data);
             $channel->basic_publish($msg, $exchangeName, $routing_key);
             $channel->close();
             $connection->close();
+            return ["success"=>"SMS successfully sent!"];
         } else {
-            throw new LoggerException("logging_service_data_must_be_non_empty_array");
+            throw new SMSException("sms_service_data_must_be_non_empty_array");
         }
     }
 }
