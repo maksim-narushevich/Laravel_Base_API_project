@@ -104,17 +104,17 @@ class ServicesController extends BaseApiController
 
         //-- Validate input data
         $this->validate($request, [
-            'code' => 'required|numeric|max:3',
+            'code' => 'required|numeric|digits:3',
             'message' => 'required',
         ],
             [
                 'code.required' => 'Code field is required',
                 'code.numeric' => 'Code field must be numeric',
-                'code.max' => 'Code field should consist of max 3 digits',
+                'code.digits' => 'Code field should consist of 3 digits',
                 'message.required' => 'Message field is required',
             ]);
 
-        $this->getLogger()->sendLog(['code'=>$request->get('code'),'message'=>$request->get('message'),'host'=>$request->getHost(),'ip'=>$request->getClientIp()]);
+        //$this->getLogger()->sendLog(['code'=>$request->get('code'),'message'=>$request->get('message'),'host'=>$request->getHost(),'ip'=>$request->getClientIp()]);
         dd("Log successfully sent!");
     }
 
