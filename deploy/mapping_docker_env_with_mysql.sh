@@ -10,8 +10,11 @@ sed -e "s/\${APP_HTTP_PORT}/${DEV_HTTP_PORT}/g;
         s/\${APP_RABBITMQ}/${DEV_RABBITMQ}/g;
         s/\${APP_MAIL_PORT}/${DEV_MAIL_PORT}/g;"  ./deploy/docker-compose.dev.tpl.yml > docker-compose.yml
 
+#####
+# Variables that has forward slashes as values
 SENTRY_LARAVEL_DSN_FILTERED=$(echo ${SENTRY_LARAVEL_DSN} | sed 's/\//\\\//g')
 DEV_AWS_SECRET_ACCESS_KEY_FILTERED=$(echo ${DEV_AWS_SECRET_ACCESS_KEY} | sed 's/\//\\\//g')
+####
 
 sed -e "s/\${APP_MYSQL_PASSWORD}/${DEV_MYSQL_PASSWORD}/g;
          s/\${APP_MYSQL_DATABASE}/${DEV_MYSQL_DATABASE}/g;
