@@ -70,6 +70,54 @@ class ServicesController extends BaseApiController
         return $this->view($response, Response::HTTP_OK);
     }
 
+    // EXAMPLE OF SENDING LOG
+    // (SEPARATE MICROSERVICE INSTANCE)
+    // #######################################
+    /**
+     * @OA\Post(
+     *      path="/services/logging",
+     *      tags={"Services"},
+     *      summary="Send logs to Golang Logging Microservice",
+     *      description="Returns successful information",
+     *      @OA\RequestBody(
+     *         description="Send message to valid phone number",
+     *         required=true,
+     *         @OA\JsonContent(
+     *          required={"code","message"},
+     *          @OA\Property(property="code", type="integer"),
+     *          @OA\Property(property="message", type="string"),
+     *          ),
+     *      ),
+     *      @OA\Response(
+     *          response=200,
+     *          description="Successful operation"
+     *       ),
+     *      @OA\Response(response=400, description="Bad request"),
+     *     security={
+     *         {"bearerAuth": {}}
+     *     }
+     * )
+     * @param Request $request
+     * @throws \Illuminate\Validation\ValidationException
+     */
+    public function sendLog(Request $request){
+
+        //-- Validate input data
+        $this->validate($request, [
+            'code' => 'required|numeric|max:3',
+            'message' => 'required',
+        ],
+            [
+                'code.required' => 'Code field is required',
+                'code.numeric' => 'Code field must be numeric',
+                'code.max' => 'Code field should consist of max 3 digits',
+                'message.required' => 'Message field is required',
+            ]);
+
+        $this->getLogger()->sendLog(['code'=>$request->get('code'),'message'=>$request->get('message'),'host'=>$request->getHost(),'ip'=>$request->getClientIp()]);
+        dd("Log successfully sent!");
+    }
+
     /**
      * @OA\Post(
      *      path="/services/image/upload",

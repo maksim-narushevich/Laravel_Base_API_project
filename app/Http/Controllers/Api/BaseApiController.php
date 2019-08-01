@@ -32,15 +32,6 @@ class BaseApiController extends Controller
         return $this->loggerService->getService();
     }
 
-
-    // EXAMPLE OF SENDING LOG
-    // (SEPARATE MICROSERVICE INSTANCE)
-    // #######################################
-    public function testLogging(Request $request){
-        $this->getLogger()->sendLog(['code'=>501,'message'=>'Internal server error (BASE API REMOTE)','host'=>$request->getHost(),'ip'=>$request->getClientIp()]);
-    dd("Log successfully sent!");
-    }
-
     /**
      * @param mixed $data
      * @param null $statusCode
