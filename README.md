@@ -31,6 +31,9 @@ Scalable and reusable Laravel based API application
 ### Swagger documentation:
 - [REST API DOCS](http://185.177.59.147:8187/api/doc)
 
+### Application structure:
+![Mockup for feature A](https://github.com/Maksim1990/Laravel_Base_API_project/blob/master/public/docs/app_structure.png)
+
 
 ### Microservices:
 - [PYTHON AWS SMS MICROSERVICE](https://github.com/Maksim1990/python_microservice_ampq_aws-sms/tree/master)
