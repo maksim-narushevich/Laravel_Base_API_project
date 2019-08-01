@@ -560,6 +560,52 @@
                 ]
             }
         },
+        "/services/logging": {
+            "post": {
+                "tags": [
+                    "Services"
+                ],
+                "summary": "Send logs to Golang Logging Microservice",
+                "description": "Returns successful information",
+                "operationId": "App\\Http\\Controllers\\Api\\ServicesController::sendLog",
+                "requestBody": {
+                    "description": "Send message to valid phone number",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "code",
+                                    "message"
+                                ],
+                                "properties": {
+                                    "code": {
+                                        "type": "integer"
+                                    },
+                                    "message": {
+                                        "type": "string"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    },
+                    "400": {
+                        "description": "Bad request"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
         "/services/image/upload": {
             "post": {
                 "tags": [
