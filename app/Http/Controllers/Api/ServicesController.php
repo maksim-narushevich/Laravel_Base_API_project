@@ -114,7 +114,7 @@ class ServicesController extends BaseApiController
                 'message.required' => 'Message field is required',
             ]);
 
-        //$this->getLogger()->sendLog(['code'=>$request->get('code'),'message'=>$request->get('message'),'host'=>$request->getHost(),'ip'=>$request->getClientIp()]);
+        $this->getLogger()->sendLog(['code'=>$request->get('code'),'message'=>$request->get('message'),'host'=>$request->getHost(),'ip'=>$request->getClientIp()]);
         dd("Log successfully sent!");
     }
 
