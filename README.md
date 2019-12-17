@@ -29,7 +29,7 @@ Scalable and reusable Laravel based API application
 ---
 
 ### Swagger documentation:
-- [REST API DOCS](http://185.177.59.147:8187/api/doc)
+- [REST API DOCS](http://thewayyougo.com:8001/api/doc)
 
 ### Application structure:
 ![Mockup for feature A](https://github.com/Maksim1990/Laravel_Base_API_project/blob/master/public/docs/app_structure.png)
